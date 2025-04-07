@@ -1,0 +1,100 @@
+.headerContainer{
+  background-color: rgb(20,20,20);
+  display: flex;
+  position: fixed;
+  top: 2%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  min-width: 550px;
+  padding: 0px 30px 0px 30px;
+  height: 50px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  animation: fadeIn 2s ease-in-out forwards;
+}
+
+.headerContainer div{
+  display: flex;
+  gap: 50px;
+}
+
+.headerAbout{
+  position: relative;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  font-size: 13px;
+  padding: 12px;
+}
+
+.headerAbout::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  height: 1px;
+  background-color: rgb(255, 255, 255);
+  transition: opacity 0.3s ease;
+}
+
+.headerAbout:hover{
+  color: rgb(255, 255, 255);
+}
+
+.headerAbout:hover::after {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.headerGreenGPT{
+  position: relative;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+  font-size: 20px;
+  padding: 12px;
+}
+
+.headerGreenGPT::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  height: 1px;
+  background-color: rgb(255, 255, 255);
+  transition: opacity 0.3s ease;
+}
+
+.headerGreenGPT:hover{
+  color: rgb(255, 255, 255);
+}
+
+.headerGreenGPT:hover::after {
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
