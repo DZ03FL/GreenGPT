@@ -1,0 +1,21 @@
+.extension-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.extension-container img {
+  width: 500px;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.description-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,61 @@
+.container {
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.heading{
+  font-size: 75px;
+  font-weight: 700;
+  margin-bottom: 0px;
+}
+
+.heading2{
+  font-size: 37px;
+  font-weight: 500;
+  color: rgb(0,0,0,0.7);
+  margin-top: 5px;
+  margin-bottom: 50px;
+}
+
+.landing-button-signup{
+  border-radius: 20px;
+  box-sizing: content-box;
+  width: 100px;
+  height: 15px;
+  margin-right: 20px;
+  background-color: #000;
+  border: 2px solid rgb(161, 161, 166);
+  color: rgb(255,255,255);
+  padding: 12px 20px 12px 20px;
+  font-size: 15px;
+  animation: fadeIn 2s ease-in-out 0.75s forwards;
+  opacity: 0;
+}
+
+.landing-button-signup:hover {
+  cursor: pointer;
+  border: 2px solid rgb(255, 255, 255);
+}
+
+.landing-button-download{
+  border-radius: 20px;
+  box-sizing: content-box;
+  width: 100px;
+  height: 15px;
+  margin-right: 20px;
+  background-color: #000;
+  border: 2px solid rgb(161, 161, 166);
+  color: rgb(255,255,255);
+  padding: 12px 20px 12px 20px;
+  font-size: 15px;
+  animation: fadeIn 2s ease-in-out 0.75s forwards;
+  opacity: 0;
+}
+
+.landing-button-download:hover {
+  cursor: pointer;
+  border: 2px solid rgb(255, 255, 255);
+}
