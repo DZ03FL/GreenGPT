@@ -49,10 +49,11 @@
   background-color: #000;
   border: 2px solid rgb(161, 161, 166);
   color: rgb(255,255,255);
-  padding: 12px 20px 12px 20px;
+  padding: 12px 35px 12px 35px;
   font-size: 15px;
   animation: fadeIn 2s ease-in-out 0.75s forwards;
   opacity: 0;
+  text-decoration: none;
 }
 
 .landing-button-download:hover {
