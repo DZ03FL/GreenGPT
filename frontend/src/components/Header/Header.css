@@ -97,4 +97,12 @@
   }
 }
 
+.signOutButton {
+  background: none;
+  border: none;
+  color: #fff; /* Set to your desired color, e.g., black */
+  font-size: inherit;
+  cursor: pointer;
+}
+
 
