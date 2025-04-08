@@ -56,6 +56,7 @@
     background: #333;
   }
   
+  /* Right column: Sign-up prompt styling */
   .login-right {
     flex: 1;
     background: #f9f9f9;
