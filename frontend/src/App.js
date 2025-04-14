@@ -4,6 +4,7 @@ import Header from './components/Header/Header';
 import Landing from './components/Landing/Landing';
 import Login from './components/Login/Login';
 import Goals from './components/Goals/Goals';
+import Leaderboard from './components/Leaderboard/Leaderboard';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/goals" element={<Goals />} />
+        <Route path="/leaderboard" element={<Leaderboard/>}/>
       </Routes>
     </Router>
   );
