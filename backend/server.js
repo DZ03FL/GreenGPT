@@ -68,6 +68,7 @@ app.post('/api/token-usage', (req, res) => {
 
 app.post('/api/energy-estimate', (req, res) => {
   const totalTokens = parseInt(req.body.totalTokens || 0);
+  const timestamp = req.body.timestamp;
 
   if (!totalTokens || totalTokens <= 0) {
     return res.status(400).json({ error: 'Missing or invalid totalTokens' });
@@ -91,15 +92,16 @@ app.post('/api/energy-estimate', (req, res) => {
   const month = new Date().getMonth() + 1;
 
   const insertEnergySql = `
-    INSERT INTO energy_usage (user_id, month, energy_used_wh)
-    VALUES (?, ?, ?)
+    INSERT INTO energy_usage (user_id, month, energy_used_wh, timestamp)
+    VALUES (?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE 
-      energy_used_wh = energy_used_wh + VALUES(energy_used_wh)
+      energy_used_wh = energy_used_wh + VALUES(energy_used_wh),
+      timestamp = VALUES(timestamp)
   `;
 
   connection.query(
     insertEnergySql,
-    [user_id, month, energyWh],
+    [user_id, month, energyWh, new Date(timestamp)],
     (err, dbResult) => {
       if (err) {
         return res.status(500).json({ error: err.message });

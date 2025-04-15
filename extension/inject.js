@@ -41,6 +41,7 @@ console.log("ChatGPT token tracker script loaded");
       const promptTokens = estimateTokens(user);
       const responseTokens = estimateTokens(gpt);
       const totalTokens = promptTokens + responseTokens;
+      const timestamp = new Date().toISOString();
 
       const payload = {
         prompt: user,
@@ -48,7 +49,7 @@ console.log("ChatGPT token tracker script loaded");
         promptTokens,
         responseTokens,
         totalTokens,
-        timestamp: new Date().toISOString()
+        timestamp
       };
 
       console.log("[GreenGPT Extension] Token Data:", payload);
@@ -66,7 +67,10 @@ console.log("ChatGPT token tracker script loaded");
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ totalTokens: totalTokens })
+        body: JSON.stringify({
+          timestamp, 
+          totalTokens
+         })
       })
         .then(res => res.json())
         .then(data => {
