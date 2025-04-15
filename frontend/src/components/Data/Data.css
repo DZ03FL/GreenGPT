@@ -5,7 +5,14 @@
     font-family: Arial, sans-serif;
   }
   
-  .data-page h1 {
+.data-page h1 {
     color: #222;
     margin-bottom: 1rem;
-  }
+}
+
+.data-page h2 {
+    color: #222;
+    display: flex;
+    margin-bottom: 1rem;
+    padding-top: 15px;
+}
