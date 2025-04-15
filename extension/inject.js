@@ -60,6 +60,18 @@ console.log("ChatGPT token tracker script loaded");
         },
         body: JSON.stringify(payload)
       });
+
+      fetch("http://localhost:5000/api/energy-estimate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ totalTokens: totalTokens })
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log("[GreenGPT Energy Stats]", data);
+        });
     }, 1500); 
   }
 

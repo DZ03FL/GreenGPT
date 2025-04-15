@@ -57,15 +57,62 @@ app.post('/api/token-usage', (req, res) => {
     [user_id, promptTokens, responseTokens, new Date(timestamp)],
     (err, result) => {
       if (err) {
-        console.error('Insert error:', err.message);
         res.status(500).json({ error: err.message });
         return;
       }
-      console.log('Insert successful, ID:', result.insertId);
+      console.log("Successfuly logged Tokens Into Database")
       res.status(201).json({ message: 'Token usage recorded', id: result.insertId });
     }
   );
 });
+
+app.post('/api/energy-estimate', (req, res) => {
+  const totalTokens = parseInt(req.body.totalTokens || 0);
+
+  if (!totalTokens || totalTokens <= 0) {
+    return res.status(400).json({ error: 'Missing or invalid totalTokens' });
+  }
+
+  const gflopsPerToken = 600;
+  const gflopsTotal = totalTokens * gflopsPerToken;
+
+  const gflopsPerJoule = 15;
+  const joules = gflopsTotal / gflopsPerJoule;
+
+  const wh = joules / 3600;
+
+  const result = {
+    total_tokens: totalTokens,
+    estimated_energy_wh: parseFloat(wh.toFixed(4)),
+  };
+
+  const user_id = 1; 
+  const energyWh = parseFloat(wh.toFixed(2)); 
+  const month = new Date().getMonth() + 1;
+
+  const insertEnergySql = `
+    INSERT INTO energy_usage (user_id, month, energy_used_wh)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE 
+      energy_used_wh = energy_used_wh + VALUES(energy_used_wh)
+  `;
+
+  connection.query(
+    insertEnergySql,
+    [user_id, month, energyWh],
+    (err, dbResult) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      console.log("Successfully logged Energy Usage Into Database")
+      res.status(201).json({ ...result, db_id: dbResult.insertId || null });
+    }
+  );
+});
+
+
+
+
 
 
 
