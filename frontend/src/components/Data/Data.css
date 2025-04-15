@@ -1,0 +1,11 @@
+.data-page {
+    min-height: calc(100vh - 80px);
+    text-align: center;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+  }
+  
+  .data-page h1 {
+    color: #222;
+    margin-bottom: 1rem;
+  }
