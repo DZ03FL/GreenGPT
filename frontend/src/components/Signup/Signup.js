@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Signup.css';
-import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const Signup = () => {
-  useAuthRedirect();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
