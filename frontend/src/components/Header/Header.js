@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './Header.css';
+import AuthContext from '../../context/AuthContext';
 
 const Header = () => {
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);  
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (response.ok) {
+        setIsLoggedIn(false);
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  };
+
   return (
     <div className="headerContainer">
       <Link to="/" className="headerGreenGPT">GreenGPT</Link>
@@ -12,7 +32,11 @@ const Header = () => {
         <Link to="/leaderboard" className="headerAbout">Leaderboard</Link>
         <Link to="/view-data" className="headerAbout">View Data</Link>
       </div>
-      <Link to="/login" className="headerAbout">Login</Link>
+      {isLoggedIn ? (
+        <button onClick={handleLogout} className="headerAbout">Logout</button>
+      ) : (
+        <Link to="/login" className="headerAbout">Login</Link>
+      )}
     </div>
   );
 };

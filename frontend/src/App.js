@@ -6,10 +6,12 @@ import Login from './components/Login/Login';
 import Goals from './components/Goals/Goals';
 import Signup from './components/Signup/Signup';
 import Leaderboard from './components/Leaderboard/Leaderboard';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <Router>
+    <AuthProvider>
+      <Router>
       {/* Header is Persistent */}
       <Header />
       <Routes>
@@ -20,6 +22,7 @@ function App() {
         <Route path="/leaderboard" element={<Leaderboard/>}/>
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 

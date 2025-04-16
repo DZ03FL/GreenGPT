@@ -1,4 +1,12 @@
 <?php
+session_set_cookie_params([
+    'lifetime' => 3600,
+    'path' => '/',
+    'secure' => false,
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
+
 session_start();
 require __DIR__ . '/../db.php';
 

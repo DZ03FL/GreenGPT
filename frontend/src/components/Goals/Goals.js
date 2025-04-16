@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Goals.css';
+import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const Goals = () => {
+  useAuthRedirect();
   const [goalName, setGoalName] = useState('');
   const [measure, setMeasure] = useState('');
   const [category, setCategory] = useState('');

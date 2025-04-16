@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import AuthContext from '../../context/AuthContext';
 
 const Login = () => {
+  const { setIsLoggedIn } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -28,6 +30,7 @@ const Login = () => {
       const data = await response.json();
   
       if (response.ok && data.success) {
+        setIsLoggedIn(true);
         navigate('/goals');
       } 
       else {
