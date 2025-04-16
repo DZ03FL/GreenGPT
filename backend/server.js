@@ -76,6 +76,36 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+app.get('/api/auth/status', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/controllers/status.php`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Status check error:', err);
+    res.status(500).json({ error: 'Could not verify login status' });
+  }
+});
+
+app.post('/api/auth/logout', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/controllers/logout.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.status(500).json({ error: 'Logout failed' });
+  }
+});
+
 //app.use('/api/auth', authRoute);
 
 
