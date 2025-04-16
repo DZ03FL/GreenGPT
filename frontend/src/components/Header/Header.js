@@ -27,7 +27,7 @@ const Header = () => {
     <div className="headerContainer">
       <Link to="/" className="headerGreenGPT">GreenGPT</Link>
       <div className="nav-links">
-        <Link to="/download" className="headerAbout">Download</Link>
+        <Link to="/add-friend" className="headerAbout">Add Friend</Link>
         <Link to="/goals" className="headerAbout">Set Goals</Link>
         <Link to="/leaderboard" className="headerAbout">Leaderboard</Link>
         <Link to="/view-data" className="headerAbout">View Data</Link>
