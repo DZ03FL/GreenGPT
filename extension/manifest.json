@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "GreenGPT Token Tracker",
+    "version": "1.1",
+    "description": "Track the energy usage of your ChatGPT queries.",
+    "permissions": ["storage", "activeTab", "webRequest"],
+    "host_permissions": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
+    "content_scripts": [
+      {
+        "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
+        "js": ["tokenizer.js", "inject.js"]
+      }
+    ]
+  }
+  

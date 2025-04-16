@@ -8,19 +8,34 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
-    // Example test credentials:
-    const testEmail = 'root';
-    const testPassword = 'pass';
-
-    if (email === testEmail && password === testPassword) {
-      // On a successful login, navigate to the landing page
-      navigate('/');
-    } else {
-      setErrorMsg('Invalid credentials. Please try again.');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          identifier: email,
+          password: password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok && data.success) {
+        navigate('/goals');
+      } 
+      else {
+        setErrorMsg(data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setErrorMsg('Something went wrong.');
     }
   };
 

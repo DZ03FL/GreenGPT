@@ -1,0 +1,107 @@
+.signup-container {
+    display: flex;
+    height: 100vh;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .signup-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    padding: 2rem;
+  }
+  
+  .signup-left h2 {
+    font-size: 2rem;
+    color: #222;
+    margin-bottom: 1.5rem;
+  }
+  
+  .signup-form {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .signup-form label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .signup-form input {
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .signup-button {
+    padding: 0.75rem;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .signup-button:hover {
+    background: #333;
+  }
+  
+  /* Right column: Sign-up prompt styling */
+  .signup-right {
+    flex: 1;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .signup-right h2 {
+    font-size: 2rem;
+    color: #222;
+    margin-bottom: 1.5rem;
+  }
+  
+  .signup-right p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 2rem;
+  }
+  
+  .login-button {
+    padding: 0.75rem 2rem;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background: #333;
+  }
+
+  .success {
+    color: green;
+    margin-bottom: 10px;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }
+
