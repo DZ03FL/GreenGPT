@@ -3,6 +3,9 @@ import fetchCookie from 'fetch-cookie';
 import nodeFetch from 'node-fetch';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import mysql from 'mysql2';
+
+
 
 dotenv.config();
 
@@ -13,35 +16,57 @@ const PHP_BACKEND = 'http://localhost:8000';
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: [
+    'http://localhost:3000',
+    'https://chat.openai.com',
+    'https://chatgpt.com',
+    'https://www.chatgpt.com'
+  ],
   credentials: true,
 }));
 
-app.get('/api/users', async (req, res) => {
-  // SQL query to get data from a 'users' table
-  /*connection.query('SELECT * FROM users', (err, results) => {
-    if (err) {
-      console.error('Query error:', err.message);
-      res.status(500).json({ error: err.message });
-      return;
-    }
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  ssl: { rejectUnauthorized: false }
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Database connection error:', err.message);
+    return;
+  }
+  console.log('Connected to MySQL database from Node');
+});
+
+// app.get('/api/users', async (req, res) => {
+//   // SQL query to get data from a 'users' table
+//   connection.query('SELECT * FROM users', (err, results) => {
+//     if (err) {
+//       console.error('Query error:', err.message);
+//       res.status(500).json({ error: err.message });
+//       return;
+//     }
 
     
-    res.json(results);
-  });*/
-  try {
-    const response = await fetch(`${PHP_BACKEND}/users.php`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', 
-    });
-    const data = await response.json();
-    res.status(response.status).json(data);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Query error' });
-  }
-});
+//     res.json(results);
+//   });
+//   try {
+//     const response = await fetch(`${PHP_BACKEND}/users.php`, {
+//       method: 'GET',
+//       headers: { 'Content-Type': 'application/json' },
+//       credentials: 'include', 
+//     });
+//     const data = await response.json();
+//     res.status(response.status).json(data);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Query error' });
+//   }
+// });
 
 app.post('/api/auth/register', async (req, res) => {
   try {
