@@ -7,10 +7,12 @@ import Goals from './components/Goals/Goals';
 import Signup from './components/Signup/Signup';
 import Leaderboard from './components/Leaderboard/Leaderboard';
 import Data from './components/Data/Data';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <Router>
+    <AuthProvider>
+      <Router>
       {/* Header is Persistent */}
       <Header />
       <Routes>
@@ -22,6 +24,7 @@ function App() {
         <Route path="/view-data" element={<Data/>}/>
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 
