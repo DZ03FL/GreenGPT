@@ -6,6 +6,7 @@ import Login from './components/Login/Login';
 import Goals from './components/Goals/Goals';
 import Signup from './components/Signup/Signup';
 import Leaderboard from './components/Leaderboard/Leaderboard';
+import AddFriend from './components/AddFriend/AddFriend';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path="/goals" element={<Goals />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/leaderboard" element={<Leaderboard/>}/>
+        <Route path="/add-friend" element={<AddFriend/>}/>
       </Routes>
     </Router>
     </AuthProvider>

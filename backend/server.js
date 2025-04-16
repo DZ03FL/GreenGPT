@@ -149,6 +149,20 @@ app.post('/api/auth/logout', async (req, res) => {
   }
 });
 
+
+app.get('/api/users', async (req, res) => {
+  const sql = 'SELECT user_id, username, email FROM users';
+
+  connection.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching users:", err.message);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json(results); 
+  });
+});
+
 //app.use('/api/auth', authRoute);
 
 app.post('/api/token-usage', async (req, res) => {
@@ -225,6 +239,8 @@ app.post('/api/energy-estimate', async (req, res) => {
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
+
+
 
 
 
