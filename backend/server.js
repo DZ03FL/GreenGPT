@@ -1,31 +1,19 @@
-require('dotenv').config();
-const express = require('express');
-const mysql = require('mysql2'); // Use mysql2 instead of mysql
+import express from 'express';
+import fetchCookie from 'fetch-cookie';
+import nodeFetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const app = express();
+const fetch = fetchCookie(nodeFetch);
+const PHP_BACKEND = 'http://localhost:8000';
 
+app.use(express.json());
 
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,  // Use the port if it's different from the default
-  ssl: {
-    rejectUnauthorized: false // This enforces SSL for DigitalOcean
-  }
-});
-
-connection.connect((err) => {
-  if (err) {
-    console.error('Database connection error:', err.message);
-    return;
-  }
-  console.log('Connected to MySQL database.');
-});
-
-app.get('/api/users', (req, res) => {
+app.get('/api/users', async (req, res) => {
   // SQL query to get data from a 'users' table
-  connection.query('SELECT * FROM users', (err, results) => {
+  /*connection.query('SELECT * FROM users', (err, results) => {
     if (err) {
       console.error('Query error:', err.message);
       res.status(500).json({ error: err.message });
@@ -34,8 +22,52 @@ app.get('/api/users', (req, res) => {
 
     // Send the query results back in the response
     res.json(results);
-  });
+  });*/
+  try {
+    const response = await fetch(`${PHP_BACKEND}/users.php`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Query error' });
+  }
 });
+
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/controllers/register.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Registration error' });
+  }
+});
+
+
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/controllers/login.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Login error' });
+  }
+});
+
+//app.use('/api/auth', authRoute);
 
 
 app.listen(5000, () => console.log('Server started on port 5000'));
