@@ -2,9 +2,9 @@
 session_start();
 require './db.php';
 
+header("Access-Control-Allow-Origin: http://localhost:5000");
+header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
-
-var_dump($_SESSION); 
 
 if (!isset($_SESSION['user_id'])) {
     http_response_code(403);

@@ -1,11 +1,13 @@
-require('dotenv').config();
-const express = require('express');
-const app = express();
-const authRoute = require('./controllers/auth');
-const connection = require('./db');
-const fetch = require('node-fetch');
+import express from 'express';
+import fetchCookie from 'fetch-cookie';
+import nodeFetch from 'node-fetch';
+import dotenv from 'dotenv';
 
-const PHP_BACKEND = 'http://localhost:8000'; 
+dotenv.config();
+
+const app = express();
+const fetch = fetchCookie(nodeFetch);
+const PHP_BACKEND = 'http://localhost:8000';
 
 app.use(express.json());
 

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server",
@@ -14,7 +15,9 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2"
+    "fetch-cookie": "^3.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

@@ -2,6 +2,8 @@
 session_start();
 require __DIR__ . '/../db.php';
 
+header("Access-Control-Allow-Origin: http://localhost:5000");
+header("Access-Control-Allow-Credentials: true");
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents('php://input'), true);
