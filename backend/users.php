@@ -12,7 +12,20 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$result = $conn->query("SELECT * FROM users");
+$stmt = $conn->prepare("SELECT id, username, email FROM users"); // Avoid SELECT * for security/perf
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to prepare statement']);
+    exit;
+}
+
+if (!$stmt->execute()) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Failed to execute query']);
+    exit;
+}
+
+$result = $stmt->get_result();
 
 if (!$result) {
     http_response_code(500);

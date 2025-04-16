@@ -2,6 +2,7 @@ import express from 'express';
 import fetchCookie from 'fetch-cookie';
 import nodeFetch from 'node-fetch';
 import dotenv from 'dotenv';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -10,6 +11,11 @@ const fetch = fetchCookie(nodeFetch);
 const PHP_BACKEND = 'http://localhost:8000';
 
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 
 app.get('/api/users', async (req, res) => {
   // SQL query to get data from a 'users' table
@@ -27,6 +33,7 @@ app.get('/api/users', async (req, res) => {
     const response = await fetch(`${PHP_BACKEND}/users.php`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', 
     });
     const data = await response.json();
     res.status(response.status).json(data);
@@ -42,6 +49,7 @@ app.post('/api/auth/register', async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req.body),
+      credentials: 'include', 
     });
     const data = await response.json();
     res.status(response.status).json(data);
@@ -58,6 +66,7 @@ app.post('/api/auth/login', async (req, res) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req.body),
+      credentials: 'include', 
     });
     const data = await response.json();
     res.status(response.status).json(data);
