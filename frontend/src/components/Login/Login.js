@@ -29,7 +29,8 @@ const Login = () => {
   
       if (response.ok && data.success) {
         navigate('/goals');
-      } else {
+      } 
+      else {
         setErrorMsg(data.message || 'Login failed');
       }
     } catch (error) {

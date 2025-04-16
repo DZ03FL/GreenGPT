@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($email) || empty($username) || empty($password)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Missing fields']);
+        echo json_encode(['success' => false, 'error' => 'Missing fields']);
         exit;
     }
 
@@ -24,10 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("sss", $email, $username, $password);
 
     if ($stmt->execute()) {
-        echo json_encode(['message' => 'User registered']);
+        echo json_encode(['success' => true, 'message' => 'User registered']);
     } 
     else {
         http_response_code(500);
-        echo json_encode(['error' => 'User registration failed']);
+        echo json_encode(['success' => false, 'error' => 'User registration failed']);
     }
 }
