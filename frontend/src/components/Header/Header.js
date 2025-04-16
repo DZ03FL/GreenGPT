@@ -33,7 +33,7 @@ const Header = () => {
         <Link to="/view-data" className="headerAbout">View Data</Link>
       </div>
       {isLoggedIn ? (
-        <button onClick={handleLogout} className="headerAbout">Logout</button>
+        <Link to="/" className="headerAbout" onClick={handleLogout}>Logout</Link>
       ) : (
         <Link to="/login" className="headerAbout">Login</Link>
       )}
