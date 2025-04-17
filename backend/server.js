@@ -149,6 +149,20 @@ app.post('/api/auth/logout', async (req, res) => {
   }
 });
 
+
+app.get('/api/users', async (req, res) => {
+  const sql = 'SELECT user_id, username, email FROM users';
+
+  connection.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching users:", err.message);
+      return res.status(500).json({ error: "Database error" });
+    }
+
+    res.json(results); 
+  });
+});
+
 //app.use('/api/auth', authRoute);
 
 app.post('/api/token-usage', async (req, res) => {
@@ -176,6 +190,36 @@ app.post('/api/token-usage', async (req, res) => {
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
+
+
+app.get('/api/energy-estimate', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      SELECT SUM(energy_used_wh) AS total_energy_used
+      FROM energy_usage
+      WHERE user_id = ?
+    `;
+
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) {
+        console.error('Energy estimate fetch error:', err.message);
+        return res.status(500).json({ error: 'Failed to fetch energy estimate' });
+      }
+
+      const totalRaw = results[0].total_energy_used;
+      console.log("Fetched total_energy_used:", totalRaw, "Type:", typeof totalRaw);
+      
+      const total = Number(totalRaw) || 0;
+      res.json({ total_energy_used: parseFloat(total.toFixed(2)) });
+    });
+  } catch (err) {
+    console.error('Energy estimate route error:', err.message);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
 
 
 app.post('/api/energy-estimate', async (req, res) => {
@@ -222,6 +266,94 @@ app.post('/api/energy-estimate', async (req, res) => {
     );
   } catch (err) {
     console.error("Energy usage error:", err.message);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+app.get('/api/goals', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      SELECT goal_id, duration, energy_limit, achieved
+      FROM goals
+      WHERE user_id = ?
+      ORDER BY duration ASC
+    `;
+
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) {
+        console.error('Fetch goals error:', err.message);
+        return res.status(500).json({ error: 'Database error fetching goals' });
+      }
+
+      res.json(results);
+    });
+  } catch (err) {
+    console.error("Goals fetch error:", err.message);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+app.post('/api/goals', async (req, res) => {
+  const { duration, energy_limit } = req.body;
+
+  if (!duration || !energy_limit) {
+    return res.status(400).json({ error: 'Missing required fields: duration and energy_limit' });
+  }
+
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const mysqlFormattedDate = new Date(duration)
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+
+    const sql = `
+      INSERT INTO goals (user_id, duration, energy_limit)
+      VALUES (?, ?, ?)
+    `;
+
+    connection.query(sql, [user_id, mysqlFormattedDate, energy_limit], (err, result) => {
+      if (err) {
+        console.error('Insert goal error:', err.message);
+        return res.status(500).json({ error: 'Database error inserting goal' });
+      }
+
+      res.status(201).json({ message: 'Goal created successfully', goal_id: result.insertId });
+    });
+  } catch (err) {
+    console.error("Goal creation error:", err.message);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+app.delete('/api/goals/:id', async (req, res) => {
+  const goalId = req.params.id;
+
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      DELETE FROM goals
+      WHERE goal_id = ? AND user_id = ?
+    `;
+
+    connection.query(sql, [goalId, user_id], (err, result) => {
+      if (err) {
+        console.error('Delete goal error:', err.message);
+        return res.status(500).json({ error: 'Failed to delete goal' });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Goal not found or not authorized' });
+      }
+
+      res.status(200).json({ message: 'Goal deleted successfully' });
+    });
+  } catch (err) {
+    console.error('Delete goal auth error:', err.message);
     res.status(401).json({ error: 'Unauthorized' });
   }
 });

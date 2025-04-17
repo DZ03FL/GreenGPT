@@ -27,13 +27,13 @@ const Header = () => {
     <div className="headerContainer">
       <Link to="/" className="headerGreenGPT">GreenGPT</Link>
       <div className="nav-links">
-        <Link to="/download" className="headerAbout">Download</Link>
+        <Link to="/add-friend" className="headerAbout">Add Friend</Link>
         <Link to="/goals" className="headerAbout">Set Goals</Link>
         <Link to="/leaderboard" className="headerAbout">Leaderboard</Link>
         <Link to="/view-data" className="headerAbout">View Data</Link>
       </div>
       {isLoggedIn ? (
-        <button onClick={handleLogout} className="headerAbout">Logout</button>
+        <Link to="/" className="headerAbout" onClick={handleLogout}>Logout</Link>
       ) : (
         <Link to="/login" className="headerAbout">Login</Link>
       )}
