@@ -399,7 +399,10 @@ app.post('/api/friends/add', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
       body: JSON.stringify(req.body),
       credentials: 'include'
     });
@@ -415,7 +418,10 @@ app.post('/api/friends/respond', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
       body: JSON.stringify(req.body),
       credentials: 'include'
     });
