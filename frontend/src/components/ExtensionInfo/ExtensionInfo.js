@@ -12,7 +12,7 @@ const ExtensionInfo = () => {
       Track the electricity and water behind ChatGPT’s cooling process, visualize your usage, and compete with friends to become the most environmentally conscious chatter!
       </p>
       <a
-        href="https://chromewebstore.google.com/detail/chatgpt-prompt-counter/djmjoepmfiooddjlmnagnnanhbjpdjkp?hl=en&pli=1"
+        href="https://cise.ufl.edu/~t.lu/cis4930/extension/greengpt.zip"
         className="arrow heading3"
         target="_blank"
         rel="noreferrer"
