@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const fetch = fetchCookie(nodeFetch);
-const PHP_BACKEND = 'https://cise.ufl.edu/~t.lu/cis4930/php-backend/';
+const PHP_BACKEND = 'https://cise.ufl.edu/~t.lu/cis4930/php-backend';
 
 app.use(express.json());
 
