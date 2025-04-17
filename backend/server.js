@@ -21,7 +21,7 @@ app.use(cors({
     'https://chat.openai.com',
     'https://chatgpt.com',
     'https://www.chatgpt.com',
-    'https://greengpt-steel.vercel.app'
+    'https://greengpt-theta.vercel.app'
   ],
   credentials: true,
 }));
