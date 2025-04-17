@@ -241,6 +241,30 @@ app.post('/api/energy-estimate', async (req, res) => {
 });
 
 
+app.get('/api/energy-usage', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      SELECT month, SUM(energy_used_wh) AS energy_used_wh
+      FROM energy_usage
+      WHERE user_id = ?
+      GROUP BY month
+      ORDER BY month ASC
+    `;
+
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) {
+        console.error("Energy usage fetch error:", err.message);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      res.json(results);
+    });
+  } catch (err) {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
 
 
 
