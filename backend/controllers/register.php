@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $input['username'] ?? '';
     $password = $input['password'] ?? '';
 
+    // Validates if required input fields are filled
     if (empty($email) || empty($username) || empty($password)) {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Missing fields']);

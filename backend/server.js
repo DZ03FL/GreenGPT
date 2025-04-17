@@ -86,6 +86,8 @@ async function getUserIdFromSession(req) {
   return data.user_id;
 }
 
+// User/Authentication routes
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/register.php`, {
@@ -119,6 +121,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Check login status
 app.get('/api/auth/status', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/status.php`, {
@@ -149,7 +152,7 @@ app.post('/api/auth/logout', async (req, res) => {
   }
 });
 
-
+// Fetches list of users from the database
 app.get('/api/users', async (req, res) => {
   const sql = 'SELECT user_id, username, email FROM users';
 
@@ -164,6 +167,8 @@ app.get('/api/users', async (req, res) => {
 });
 
 //app.use('/api/auth', authRoute);
+
+// Token usage and energy estimate routes
 
 app.post('/api/token-usage', async (req, res) => {
   const { promptTokens, responseTokens, timestamp } = req.body;
@@ -295,6 +300,8 @@ app.get('/api/goals', async (req, res) => {
   }
 });
 
+// Fetch and update goals
+
 app.post('/api/goals', async (req, res) => {
   const { duration, energy_limit } = req.body;
 
@@ -358,13 +365,15 @@ app.delete('/api/goals/:id', async (req, res) => {
   }
 });
 
+// Friendship handling routes
+
+// Sends a friend request to a user if the user exists and is not already a friend
 app.post('/api/friends/add', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body),
       credentials: 'include'
@@ -377,13 +386,13 @@ app.post('/api/friends/add', async (req, res) => {
   }
 });
 
+// Function to accept or decline a friend request
 app.post('/api/friends/respond', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/request.php`, {
+    const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body), // { friendship_id, action: "accept" or "decline" }
       credentials: 'include'
@@ -396,13 +405,13 @@ app.post('/api/friends/respond', async (req, res) => {
   }
 });
 
+// Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
     });
@@ -414,5 +423,96 @@ app.get('/api/friends/list', async (req, res) => {
   }
 });
 
+// Fetches the list of pending friend requests for the logged-in user
+app.get('/api/friends/requests', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Error fetching friend requests:', err.message);
+    res.status(500).json({ error: 'Could not fetch friend requests' });
+  }
+});
+
+// Fetch monthly energy usage data
+
+app.get('/api/energy-monthly', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      SELECT month, SUM(energy_used_wh) AS total
+      FROM energy_usage
+      WHERE user_id = ?
+      GROUP BY month
+      ORDER BY month
+    `;
+
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      res.json(results); 
+    });
+  } catch (err) {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    // User ID from session
+    const me = await getUserIdFromSession(req);
+
+    // Fetch only friends of the user
+    const friendsRes = await fetch(
+      `${PHP_BACKEND}/friends/friendlist.php`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Cookie': req.headers.cookie || '' },
+        credentials: 'include'
+      }
+    );
+    if (!friendsRes.ok) {
+      return res.status(500).json({ error: 'Failed to load friends list' });
+    }
+    const friends = await friendsRes.json();
+    const friendIds = friends.map(f => f.user_id);
+    if (friendIds.length === 0) {
+      return res.json([]);                     // No friends, return empty array
+    }
+
+    // Ensures the logged-in user is always included in the leaderboard
+    if (!friendIds.includes(me)) friendIds.push(me);
+
+    // Fetch data from DB and calculate leaderboard
+    const thisMonth = new Date().getMonth() + 1;
+    const sql = `
+      SELECT 
+        u.username AS name,
+        ROUND(eu.energy_used_wh, 2) AS energySaved
+      FROM energy_usage AS eu
+      JOIN users AS u
+        ON u.user_id = eu.user_id
+      WHERE eu.month = ?
+        AND eu.user_id IN (?)
+      ORDER BY eu.energy_used_wh ASC
+      LIMIT 10
+    `;
+    connection.query(sql, [thisMonth, friendIds], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    });
+
+  } catch (err) {
+    console.error('Leaderboard route error:', err);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
 
 app.listen(5000, () => console.log('Server started on port 5000'));
