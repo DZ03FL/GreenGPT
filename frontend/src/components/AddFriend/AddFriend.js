@@ -69,17 +69,19 @@ const AddFriend = () => {
             <div className='email-content'>{user.email}</div>
             </div>
             </div>
-            <div>
+            <div className="action-container">
             {selectedUserID === user.user_id && <button className='add-friend-button' onClick={(e) => {
               e.stopPropagation();
               handleAddFriend(user.user_id, user.username)
             }}>Add Friend</button>}
-            
+
+            <div className='user-message-container'>
             {activeMessageUserID === user.user_id && (
               <div className={activeMessageType === 'success' ? 'success' : 'error'}>
                 {activeMessage}
               </div>
             )}
+            </div>
             </div>
           </div>
         ))}
