@@ -515,4 +515,8 @@ app.get('/api/leaderboard', async (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.send('GreenGPT backend is running!');
+});
+
 app.listen(5000, () => console.log('Server started on port 5000'));
