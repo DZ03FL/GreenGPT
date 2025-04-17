@@ -20,7 +20,8 @@ app.use(cors({
     'http://localhost:3000',
     'https://chat.openai.com',
     'https://chatgpt.com',
-    'https://www.chatgpt.com'
+    'https://www.chatgpt.com',
+    'https://greengpt-steel.vercel.app'
   ],
   credentials: true,
 }));
