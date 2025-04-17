@@ -135,4 +135,14 @@
   .friend-icon {
     margin-bottom: 1rem;
   }
+
+  .success {
+    color: green;
+    margin-bottom: 10px;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }
 }
