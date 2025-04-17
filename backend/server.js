@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mysql from 'mysql2';
 
+
+
 dotenv.config();
 
 const app = express();
@@ -41,7 +43,32 @@ connection.connect((err) => {
   console.log('Connected to MySQL database from Node');
 });
 
-// 🔧 Helper to parse PHP responses that start with a shebang or extra output
+// app.get('/api/users', async (req, res) => {
+//   // SQL query to get data from a 'users' table
+//   connection.query('SELECT * FROM users', (err, results) => {
+//     if (err) {
+//       console.error('Query error:', err.message);
+//       res.status(500).json({ error: err.message });
+//       return;
+//     }
+
+    
+//     res.json(results);
+//   });
+//   try {
+//     const response = await fetch(`${PHP_BACKEND}/users.php`, {
+//       method: 'GET',
+//       headers: { 'Content-Type': 'application/json' },
+//       credentials: 'include', 
+//     });
+//     const data = await response.json();
+//     res.status(response.status).json(data);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Query error' });
+//   }
+// });
+
 async function parsePhpJson(response) {
   const raw = await response.text();
   const jsonStart = raw.indexOf('{');
@@ -67,7 +94,7 @@ async function getUserIdFromSession(req) {
   return data.user_id;
 }
 
-// Authentication routes
+// User/Authentication routes
 
 app.post('/api/auth/register', async (req, res) => {
   try {
@@ -85,6 +112,7 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/login.php`, {
@@ -101,6 +129,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Check login status
 app.get('/api/auth/status', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/status.php`, {
@@ -131,7 +160,7 @@ app.post('/api/auth/logout', async (req, res) => {
   }
 });
 
-// Users from local MySQL
+// Fetches list of users from the database
 app.get('/api/users', async (req, res) => {
   const sql = 'SELECT user_id, username, email FROM users';
 
@@ -144,16 +173,22 @@ app.get('/api/users', async (req, res) => {
   });
 });
 
-// Token logging
+//app.use('/api/auth', authRoute);
+
+// Token usage and energy estimate routes
+
 app.post('/api/token-usage', async (req, res) => {
   const { promptTokens, responseTokens, timestamp } = req.body;
 
   try {
     const user_id = await getUserIdFromSession(req);
+    console.log("Logging tokens for user:", user_id);
+
     const sql = `
       INSERT INTO tokens (user_id, prompt_tokens, completion_tokens, timestamp)
       VALUES (?, ?, ?, ?)
     `;
+
     connection.query(
       sql,
       [user_id, promptTokens, responseTokens, new Date(timestamp)],
@@ -168,7 +203,37 @@ app.post('/api/token-usage', async (req, res) => {
   }
 });
 
-// Energy estimate logging
+
+app.get('/api/energy-estimate', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      SELECT SUM(energy_used_wh) AS total_energy_used
+      FROM energy_usage
+      WHERE user_id = ?
+    `;
+
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) {
+        console.error('Energy estimate fetch error:', err.message);
+        return res.status(500).json({ error: 'Failed to fetch energy estimate' });
+      }
+
+      const totalRaw = results[0].total_energy_used;
+      console.log("Fetched total_energy_used:", totalRaw, "Type:", typeof totalRaw);
+      
+      const total = Number(totalRaw) || 0;
+      res.json({ total_energy_used: parseFloat(total.toFixed(2)) });
+    });
+  } catch (err) {
+    console.error('Energy estimate route error:', err.message);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+
+
 app.post('/api/energy-estimate', async (req, res) => {
   const totalTokens = parseInt(req.body.totalTokens || 0);
   const timestamp = req.body.timestamp;
@@ -179,16 +244,23 @@ app.post('/api/energy-estimate', async (req, res) => {
 
   try {
     const user_id = await getUserIdFromSession(req);
+    console.log("Logging energy usage for user:", user_id);
+
     const gflopsPerToken = 600;
     const gflopsTotal = totalTokens * gflopsPerToken;
     const gflopsPerJoule = 15;
     const joules = gflopsTotal / gflopsPerJoule;
     const wh = joules / 3600;
 
+    const result = {
+      total_tokens: totalTokens,
+      estimated_energy_wh: parseFloat(wh.toFixed(4))
+    };
+
     const energyWh = parseFloat(wh.toFixed(2));
     const month = new Date().getMonth() + 1;
 
-    const insertSql = `
+    const insertEnergySql = `
       INSERT INTO energy_usage (user_id, month, energy_used_wh, timestamp)
       VALUES (?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE 
@@ -197,15 +269,11 @@ app.post('/api/energy-estimate', async (req, res) => {
     `;
 
     connection.query(
-      insertSql,
+      insertEnergySql,
       [user_id, month, energyWh, new Date(timestamp)],
       (err, dbResult) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ 
-          total_tokens: totalTokens,
-          estimated_energy_wh: parseFloat(wh.toFixed(4)),
-          db_id: dbResult.insertId || null 
-        });
+        res.status(201).json({ ...result, db_id: dbResult.insertId || null });
       }
     );
   } catch (err) {
@@ -214,7 +282,6 @@ app.post('/api/energy-estimate', async (req, res) => {
   }
 });
 
-// Energy monthly breakdown
 app.get('/api/energy-monthly', async (req, res) => {
   try {
     const user_id = await getUserIdFromSession(req);
@@ -234,61 +301,100 @@ app.get('/api/energy-monthly', async (req, res) => {
   }
 });
 
-// Goals
+
 app.get('/api/goals', async (req, res) => {
   try {
     const user_id = await getUserIdFromSession(req);
+
     const sql = `
       SELECT goal_id, duration, energy_limit, achieved
       FROM goals
       WHERE user_id = ?
       ORDER BY duration ASC
     `;
+
     connection.query(sql, [user_id], (err, results) => {
-      if (err) return res.status(500).json({ error: 'Database error fetching goals' });
+      if (err) {
+        console.error('Fetch goals error:', err.message);
+        return res.status(500).json({ error: 'Database error fetching goals' });
+      }
+
       res.json(results);
     });
   } catch (err) {
+    console.error("Goals fetch error:", err.message);
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
 
+// Fetch and update goals
+
 app.post('/api/goals', async (req, res) => {
   const { duration, energy_limit } = req.body;
+
   if (!duration || !energy_limit) {
-    return res.status(400).json({ error: 'Missing required fields' });
+    return res.status(400).json({ error: 'Missing required fields: duration and energy_limit' });
   }
 
   try {
     const user_id = await getUserIdFromSession(req);
-    const formatted = new Date(duration).toISOString().slice(0, 19).replace('T', ' ');
-    const sql = `INSERT INTO goals (user_id, duration, energy_limit) VALUES (?, ?, ?)`;
-    connection.query(sql, [user_id, formatted, energy_limit], (err, result) => {
-      if (err) return res.status(500).json({ error: 'Database error inserting goal' });
-      res.status(201).json({ message: 'Goal created', goal_id: result.insertId });
+
+    const mysqlFormattedDate = new Date(duration)
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
+
+    const sql = `
+      INSERT INTO goals (user_id, duration, energy_limit)
+      VALUES (?, ?, ?)
+    `;
+
+    connection.query(sql, [user_id, mysqlFormattedDate, energy_limit], (err, result) => {
+      if (err) {
+        console.error('Insert goal error:', err.message);
+        return res.status(500).json({ error: 'Database error inserting goal' });
+      }
+
+      res.status(201).json({ message: 'Goal created successfully', goal_id: result.insertId });
     });
   } catch (err) {
+    console.error("Goal creation error:", err.message);
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
 
 app.delete('/api/goals/:id', async (req, res) => {
   const goalId = req.params.id;
+
   try {
     const user_id = await getUserIdFromSession(req);
-    const sql = `DELETE FROM goals WHERE goal_id = ? AND user_id = ?`;
+
+    const sql = `
+      DELETE FROM goals
+      WHERE goal_id = ? AND user_id = ?
+    `;
+
     connection.query(sql, [goalId, user_id], (err, result) => {
-      if (err) return res.status(500).json({ error: 'Failed to delete goal' });
-      if (result.affectedRows === 0) return res.status(404).json({ error: 'Not found' });
-      res.json({ message: 'Goal deleted' });
+      if (err) {
+        console.error('Delete goal error:', err.message);
+        return res.status(500).json({ error: 'Failed to delete goal' });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Goal not found or not authorized' });
+      }
+
+      res.status(200).json({ message: 'Goal deleted successfully' });
     });
   } catch (err) {
+    console.error('Delete goal auth error:', err.message);
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
 
-// Friends
+// Friendship handling routes
 
+// Sends a friend request to a user if the user exists and is not already a friend
 app.post('/api/friends/add', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
@@ -304,6 +410,7 @@ app.post('/api/friends/add', async (req, res) => {
   }
 });
 
+// Function to accept or decline a friend request
 app.post('/api/friends/respond', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
@@ -319,6 +426,8 @@ app.post('/api/friends/respond', async (req, res) => {
   }
 });
 
+
+// Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
@@ -333,6 +442,7 @@ app.get('/api/friends/list', async (req, res) => {
   }
 });
 
+// Fetches the list of pending friend requests for the logged-in user
 app.get('/api/friends/requests', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
@@ -347,7 +457,8 @@ app.get('/api/friends/requests', async (req, res) => {
   }
 });
 
-// Leaderboard
+// Fetch monthly energy usage data
+
 app.get('/api/leaderboard', async (req, res) => {
   try {
     const me = await getUserIdFromSession(req);
@@ -379,6 +490,7 @@ app.get('/api/leaderboard', async (req, res) => {
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
+
 
 app.get('/', (req, res) => {
   res.send('GreenGPT backend is running!');
