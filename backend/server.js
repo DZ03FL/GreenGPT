@@ -457,6 +457,52 @@ app.get('/api/energy-monthly', async (req, res) => {
   }
 });
 
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    // 1) who am I?
+    const me = await getUserIdFromSession(req);
 
+    // 2) fetch only my accepted friends from PHP
+    const friendsRes = await fetch(
+      `${PHP_BACKEND}/friends/friendlist.php`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', 'Cookie': req.headers.cookie || '' },
+        credentials: 'include'
+      }
+    );
+    if (!friendsRes.ok) {
+      return res.status(500).json({ error: 'Failed to load friends list' });
+    }
+    const friends = await friendsRes.json();   // [{ user_id, username, email }, …]
+    const friendIds = friends.map(f => f.user_id);
+    if (friendIds.length === 0) {
+      return res.json([]);                     // no friends → empty leaderboard
+    }
+
+    // 3) get current month & query energy_usage for only those IDs
+    const thisMonth = new Date().getMonth() + 1;
+    const sql = `
+      SELECT 
+        u.username AS name,
+        ROUND(eu.energy_used_wh, 2) AS energySaved
+      FROM energy_usage AS eu
+      JOIN users AS u
+        ON u.user_id = eu.user_id
+      WHERE eu.month = ?
+        AND eu.user_id IN (?)
+      ORDER BY eu.energy_used_wh ASC
+      LIMIT 10
+    `;
+    connection.query(sql, [thisMonth, friendIds], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    });
+
+  } catch (err) {
+    console.error('Leaderboard route error:', err);
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
 
 app.listen(5000, () => console.log('Server started on port 5000'));
