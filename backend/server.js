@@ -459,10 +459,10 @@ app.get('/api/energy-monthly', async (req, res) => {
 
 app.get('/api/leaderboard', async (req, res) => {
   try {
-    // 1) who am I?
+    // User ID from session
     const me = await getUserIdFromSession(req);
 
-    // 2) fetch only my accepted friends from PHP
+    // Fetch only friends of the user
     const friendsRes = await fetch(
       `${PHP_BACKEND}/friends/friendlist.php`,
       {
@@ -474,13 +474,13 @@ app.get('/api/leaderboard', async (req, res) => {
     if (!friendsRes.ok) {
       return res.status(500).json({ error: 'Failed to load friends list' });
     }
-    const friends = await friendsRes.json();   // [{ user_id, username, email }, …]
+    const friends = await friendsRes.json();
     const friendIds = friends.map(f => f.user_id);
     if (friendIds.length === 0) {
-      return res.json([]);                     // no friends → empty leaderboard
+      return res.json([]);                     // No friends, return empty array
     }
 
-    // 3) get current month & query energy_usage for only those IDs
+    // 3) Fetch data from DB and calculate leaderboard
     const thisMonth = new Date().getMonth() + 1;
     const sql = `
       SELECT 
