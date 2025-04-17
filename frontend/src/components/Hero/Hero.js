@@ -11,7 +11,7 @@ const Hero = () => {
         <Link to="/login">
           <button className='landing-button-signup'>Sign Up</button>
         </Link>
-        <a className='landing-button-download' href='https://chromewebstore.google.com/detail/chatgpt-prompt-counter/djmjoepmfiooddjlmnagnnanhbjpdjkp?hl=en&pli=1' target='_blank' rel='noreferrer'>Download</a>
+        <a className='landing-button-download' href='https://cise.ufl.edu/~t.lu/cis4930/extension/greengpt.zip' target='_blank' rel='noreferrer'>Download</a>
         </div>
       
     </div>
