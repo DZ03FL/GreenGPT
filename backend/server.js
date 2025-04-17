@@ -337,15 +337,25 @@ app.get('/api/friends/requests', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
       credentials: 'include'
     });
-    const data = await parsePhpJson(response);
-    res.status(response.status).json(data);
+
+    const raw = await response.text();
+    console.log("🔍 Raw response from PHP:", raw);
+
+    const jsonStart = raw.indexOf('{');
+    const json = JSON.parse(raw.slice(jsonStart));
+    res.status(response.status).json(json);
   } catch (err) {
+    console.error("⚠️ Error in /api/friends/requests:", err.message);
     res.status(500).json({ error: 'Could not fetch requests' });
   }
 });
+
 
 // Leaderboard
 app.get('/api/leaderboard', async (req, res) => {
