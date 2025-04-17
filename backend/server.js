@@ -480,7 +480,10 @@ app.get('/api/leaderboard', async (req, res) => {
       return res.json([]);                     // No friends, return empty array
     }
 
-    // 3) Fetch data from DB and calculate leaderboard
+    // Ensures the logged-in user is always included in the leaderboard
+    if (!friendIds.includes(me)) friendIds.push(me);
+
+    // Fetch data from DB and calculate leaderboard
     const thisMonth = new Date().getMonth() + 1;
     const sql = `
       SELECT 
