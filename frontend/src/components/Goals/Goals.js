@@ -112,7 +112,7 @@ const Goals = () => {
         <div className="carousel"> <img src="/images/icon.jpg" alt="Icon" className="goal-icon" /></div>
         <h2>Set New Energy Goal</h2>
         <form className="goals-form" onSubmit={handleFormSubmit}>
-          <label htmlFor="measure">Enter a Total Energy Limit Goal (kWh)</label>
+          <label htmlFor="measure">Enter a Total Energy Limit Goal (Wh)</label>
           <input
             id="measure"
             type="number"
@@ -152,7 +152,7 @@ const Goals = () => {
                 <div key={goal.id} className={`goalItem ${isExpired ? 'expired' : isAchieved ? 'completed' : 'inProgress'}`}>
                   <div className={`goalMarker ${isAchieved ? 'checked' : ''}`}></div>
                   <div className="goalDetails">
-                    <div><strong>Energy Limit:</strong> {goal.measure} kWh</div>
+                    <div><strong>Energy Limit:</strong> {goal.measure} Wh</div>
                     <div><strong>Deadline:</strong> {new Date(goal.duration).toLocaleDateString()}</div>
                     <div><strong>Status:</strong> 
                       {isExpired 
@@ -172,7 +172,7 @@ const Goals = () => {
         </div>
 
         <div className="energyGraph">
-          <h2>Total Energy Used: {energyUsed} kWh</h2>
+          <h2>Total Energy Used: {energyUsed} Wh</h2>
         </div>
       </div>
     </div>

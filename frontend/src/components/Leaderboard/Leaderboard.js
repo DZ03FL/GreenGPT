@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Leaderboard.css';
+import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const Leaderboard = () => {
+  useAuthRedirect();
   const [leaderboardData, setLeaderboardData] = useState([]);
   const API = 'http://localhost:5000/api/leaderboard';
 
@@ -39,7 +41,7 @@ const Leaderboard = () => {
                   <span className="user-rank">#{idx + 1}</span>
                   <span className="user-name">{user.name}</span>
                   <span className="energy-saved">
-                    {user.energySaved} kWh
+                    {user.energySaved} Wh
                   </span>
                 </li>
               ))}

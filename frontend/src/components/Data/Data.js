@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import './Data.css';
+import useAuthRedirect from '../../hooks/useAuthRedirect';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,6 +24,7 @@ ChartJS.register(
 );
 
 const Data = () => {
+  useAuthRedirect();
   const [monthlyData, setMonthlyData] = useState([]);
   const [energyLabels, setEnergyLabels] = useState([]);
   const [energyValues, setEnergyValues] = useState([]);
@@ -59,7 +61,7 @@ const Data = () => {
     labels: energyLabels,
     datasets: [
       {
-        label: 'Monthly Energy Use (kWh)',
+        label: 'Monthly Energy Use (Wh)',
         data: energyValues,
         backgroundColor: '#4caf50',
       },
@@ -76,7 +78,7 @@ const Data = () => {
     labels: pieLabels.length === 2 ? pieLabels : ['Previous', 'Current'],
     datasets: [
       {
-        label: 'Monthly Energy Comparison (kWh)',
+        label: 'Monthly Energy Comparison (Wh)',
         data: pieValues.length === 2 ? pieValues : [0, 0],
         backgroundColor: ['#81c784', '#388e3c'],
       },
