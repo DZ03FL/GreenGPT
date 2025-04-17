@@ -77,11 +77,14 @@ async function parsePhpJson(response) {
 }
 
 async function getUserIdFromSession(req) {
-  const response = await fetch(`${PHP_BACKEND}/controllers/whoami.php`, {
+  const cookie = req.headers.cookie || '';
+  console.log('🍪 Incoming request cookie:', cookie);  // <— this logs it
+
+  const response = await fetch('${PHP_BACKEND}/controllers/whoami.php', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'Cookie': req.headers.cookie || ''
+      'Cookie': cookie
     },
     credentials: 'include'
   });
@@ -90,7 +93,7 @@ async function getUserIdFromSession(req) {
     throw new Error('User not authenticated');
   }
 
-  const data = await parsePhpJson(response);
+  const data = await response.json();
   return data.user_id;
 }
 
