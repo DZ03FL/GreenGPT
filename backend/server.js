@@ -432,7 +432,10 @@ app.get('/api/friends/list', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
       credentials: 'include'
     });
     const data = await parsePhpJson(response);
@@ -447,7 +450,10 @@ app.get('/api/friends/requests', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
       credentials: 'include'
     });
     const data = await parsePhpJson(response);
