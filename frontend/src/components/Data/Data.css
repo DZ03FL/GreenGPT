@@ -1,0 +1,63 @@
+.data-page {
+    min-height: calc(100vh - 80px);
+    text-align: center;
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+}
+
+.data-page > div {
+    flex: 1;
+}
+
+.data-page h1 {
+    color: #222;
+    margin-bottom: 1rem;
+}
+
+.data-page h2 {
+    color: #222;
+    display: flex;
+    margin-bottom: 1rem;
+    padding-top: 15px;
+}
+
+.charts {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.bar-container{
+    height: 435px;
+    margin-bottom: 1rem;
+}
+
+.bar-graph{
+    flex: 1;
+    min-width: 300px;
+    background: rgb(233, 245, 231);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1); 
+}
+
+.pie-chart {
+  flex: 1;
+  min-width: 300px;
+  background: rgb(233, 245, 231);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.1);
+}
+
+#prompt-summary {
+    margin-top: 1.5rem;
+    background: #f9fdf9;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: inset 0 0 4px rgba(76, 175, 80, 0.05);
+    text-align: center;
+  }
+  
+  

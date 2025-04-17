@@ -432,4 +432,26 @@ app.get('/api/friends/requests', async (req, res) => {
   }
 });
 
+app.get('/api/energy-monthly', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+
+    const sql = `
+      SELECT month, SUM(energy_used_wh) AS total
+      FROM energy_usage
+      WHERE user_id = ?
+      GROUP BY month
+      ORDER BY month
+    `;
+
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      res.json(results); 
+    });
+  } catch (err) {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+
 app.listen(5000, () => console.log('Server started on port 5000'));
