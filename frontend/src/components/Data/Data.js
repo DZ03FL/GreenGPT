@@ -1,7 +1,6 @@
-// Install chart libraries (npm install chart.js react-chartjs-2)
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
-import "./Data.css"
+import './Data.css';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -24,73 +23,88 @@ ChartJS.register(
 );
 
 const Data = () => {
-    // Sample Data for graphs
-    const currentWeekData = [22, 19, 24, 21, 20, 18, 23];
-    const lastWeekTotal = 145;
-    const currentWeekTotal = currentWeekData.reduce((acc, val) => acc + val, 0);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [energyLabels, setEnergyLabels] = useState([]);
+  const [energyValues, setEnergyValues] = useState([]);
 
-    const barData = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        datasets: [
-          {
-            label: 'Current Week Consumption (kWh)',
-            data: currentWeekData,
-            backgroundColor: '#4caf50',
-          },
-        ],
-      };
+  useEffect(() => {
+    const fetchMonthlyEnergy = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/energy-monthly', {
+          credentials: 'include',
+        });
+        const data = await res.json();
 
-      const pieData = {
-        labels: ['Last Week', 'This week'],
-        datasets: [
-            {
-                label: 'Total kWh',
-                data: [lastWeekTotal, currentWeekTotal],
-                backgroundColor: ['#81c784', '#388e3c'],
-            },
-        ],
-      };
+        if (Array.isArray(data)) {
+          const labels = data.map(entry =>
+            new Date(2024, entry.month - 1).toLocaleString('default', { month: 'short' })
+          );
+          const values = data.map(entry => parseFloat(entry.total));
 
-    const promptUsageData = [5, 7, 3, 6, 2, 4, 8]; // One number per day
-    const promptTotal = promptUsageData.reduce((a, b) => a + b, 0);
-
-    const promptsToday = 3; // Replace with dynamic data later
-    const promptsThisWeek = promptUsageData.reduce((a, b) => a + b, 0);      
-
-    const promptChart = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [
-        {
-        label: 'Prompts Used',
-        data: promptUsageData,
-        backgroundColor: '#81c784',
-        },
-    ],
+          setMonthlyData(data);
+          setEnergyLabels(labels);
+          setEnergyValues(values);
+        } else {
+          console.error('Unexpected energy data:', data);
+        }
+      } catch (err) {
+        console.error('Error fetching monthly energy:', err);
+      }
     };
 
+    fetchMonthlyEnergy();
+  }, []);
+
+  const monthlyBarData = {
+    labels: energyLabels,
+    datasets: [
+      {
+        label: 'Monthly Energy Use (kWh)',
+        data: energyValues,
+        backgroundColor: '#4caf50',
+      },
+    ],
+  };
+
+  const lastTwoMonths = monthlyData.slice(-2);
+  const pieLabels = lastTwoMonths.map(entry =>
+    new Date(2024, entry.month - 1).toLocaleString('default', { month: 'short' })
+  );
+  const pieValues = lastTwoMonths.map(entry => parseFloat(entry.total || 0));
+
+  const pieData = {
+    labels: pieLabels.length === 2 ? pieLabels : ['Previous', 'Current'],
+    datasets: [
+      {
+        label: 'Monthly Energy Comparison (kWh)',
+        data: pieValues.length === 2 ? pieValues : [0, 0],
+        backgroundColor: ['#81c784', '#388e3c'],
+      },
+    ],
+  };
 
   return (
     <div className="data-page">
-        <h1>View Data</h1>
-        <div className="charts">
-            <div className="bar-graph">
-                <h2>Daily Energy Use</h2>
-                <div className="bar-container">
-                    <Bar data={barData} options={{ responsive: true, maintainAspectRatio: false }} />
-                </div>
-                <div id="prompt-summary">
-                    <h2>Prompt Summary</h2>
-                    <p style={{ fontSize: '1.1rem', color: '#333' }}>
-                        You used <strong>{promptsToday}</strong> prompts today and <strong>{promptsThisWeek}</strong> prompts this week with GreenGPT.
-                    </p>
-                </div>
-            </div>
-            <div className="pie-chart">
-                <h2>Comparison</h2>
-                <Pie data={pieData} options={{responsive: true}} />
-            </div>
+      <h1>View Data</h1>
+
+      <div className="charts">
+        <div className="bar-graph">
+          <h2>Monthly Energy Use</h2>
+          <div className="bar-container">
+            <Bar data={monthlyBarData} options={{ responsive: true, maintainAspectRatio: false }} />
+          </div>
         </div>
 
+        <div className="pie-chart">
+          <h2>Comparison</h2>
+          {pieLabels.length < 2 && (
+            <p style={{ color: '#888', marginBottom: '1rem' }}>
+              Not enough data yet to compare this month and last month.
+            </p>
+          )}
+          <Pie data={pieData} options={{ responsive: true }} />
+        </div>
+      </div>
     </div>
   );
 };
