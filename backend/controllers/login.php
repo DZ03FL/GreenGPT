@@ -1,4 +1,5 @@
 <?php
+// Start the session and set cookie parameters to ensure the session does not expire immediately
 session_set_cookie_params([
     'lifetime' => 3600,
     'path' => '/',
@@ -28,12 +29,12 @@ if (!$identifier || !$password) {
     exit;
 }
 
+// Check if the user exists in the database before attempting to log in
 $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? OR username = ?");
 $stmt->bind_param("ss", $identifier, $identifier);
 $stmt->execute();
 $result = $stmt->get_result();
 
-//implement password hashing later
 if ($result->num_rows === 0) {
     http_response_code(401);
     $response['message'] = 'User not found';

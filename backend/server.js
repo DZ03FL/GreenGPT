@@ -121,6 +121,7 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Check login status
 app.get('/api/auth/status', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/status.php`, {
@@ -151,7 +152,7 @@ app.post('/api/auth/logout', async (req, res) => {
   }
 });
 
-
+// Fetches list of users from the database
 app.get('/api/users', async (req, res) => {
   const sql = 'SELECT user_id, username, email FROM users';
 
@@ -366,6 +367,7 @@ app.delete('/api/goals/:id', async (req, res) => {
 
 // Friendship handling routes
 
+// Sends a friend request to a user if the user exists and is not already a friend
 app.post('/api/friends/add', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
@@ -384,6 +386,7 @@ app.post('/api/friends/add', async (req, res) => {
   }
 });
 
+// Function to accept or decline a friend request
 app.post('/api/friends/respond', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
@@ -402,6 +405,7 @@ app.post('/api/friends/respond', async (req, res) => {
   }
 });
 
+// Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
@@ -419,6 +423,7 @@ app.get('/api/friends/list', async (req, res) => {
   }
 });
 
+// Fetches the list of pending friend requests for the logged-in user
 app.get('/api/friends/requests', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
@@ -435,6 +440,8 @@ app.get('/api/friends/requests', async (req, res) => {
     res.status(500).json({ error: 'Could not fetch friend requests' });
   }
 });
+
+// Fetch monthly energy usage data
 
 app.get('/api/energy-monthly', async (req, res) => {
   try {

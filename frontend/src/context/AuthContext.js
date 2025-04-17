@@ -2,6 +2,8 @@ import React, { createContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+// Checks if the user is logged in by making a request to the backend
+
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
