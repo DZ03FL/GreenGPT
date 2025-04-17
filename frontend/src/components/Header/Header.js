@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import './Header.css';
 import AuthContext from '../../context/AuthContext';
+import logo from './GreenGPT_logo_white.svg';
 
 const Header = () => {
   const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);  
@@ -25,7 +26,10 @@ const Header = () => {
 
   return (
     <div className="headerContainer">
-      <Link to="/" className="headerGreenGPT">GreenGPT</Link>
+      <div className="logo-container">
+        <img src={logo} alt="GreenGPT logo" className="logo-img" />
+        <Link to="/" className="headerGreenGPT">GreenGPT</Link>
+      </div>
       <div className="nav-links">
         <Link to="/add-friend" className="headerAbout">Add Friend</Link>
         <Link to="/goals" className="headerAbout">Set Goals</Link>
