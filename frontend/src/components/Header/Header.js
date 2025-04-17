@@ -26,23 +26,29 @@ const Header = () => {
 
   return (
     <div className="headerContainer">
-      <div className="logo-container">
-        <img src={logo} alt="GreenGPT logo" className="logo-img" />
-        <Link to="/" className="headerGreenGPT">GreenGPT</Link>
-      </div>
-      <div className="nav-links">
-        <Link to="/add-friend" className="headerAbout">Add Friend</Link>
-        <Link to="/buddies" className="headerAbout">Buddy List</Link>
-        <Link to="/goals" className="headerAbout">Set Goals</Link>
-        <Link to="/leaderboard" className="headerAbout">Leaderboard</Link>
-        <Link to="/view-data" className="headerAbout">View Data</Link>
-      </div>
-      {isLoggedIn ? (
-        <Link to="/" className="headerAbout" onClick={handleLogout}>Logout</Link>
-      ) : (
-        <Link to="/login" className="headerAbout">Login</Link>
-      )}
+  <div className="headerLeft">
+    <div className="logo-container">
+      <img src={logo} alt="GreenGPT logo" className="logo-img" />
+      <Link to="/" className="headerGreenGPT">GreenGPT</Link>
     </div>
+  </div>
+
+  <div className="headerCenter nav-links">
+    <Link to="/add-friend" className="headerAbout">Add Friend</Link>
+    <Link to="/buddies" className="headerAbout">Buddy List</Link>
+    <Link to="/goals" className="headerAbout">Set Goals</Link>
+    <Link to="/leaderboard" className="headerAbout">Leaderboard</Link>
+    <Link to="/view-data" className="headerAbout">View Data</Link>
+  </div>
+
+  <div className="headerRight">
+    {isLoggedIn ? (
+      <Link to="/" className="headerAbout" onClick={handleLogout}>Logout</Link>
+    ) : (
+      <Link to="/login" className="headerAbout">Login</Link>
+    )}
+  </div>
+</div>
   );
 };
 

@@ -1,137 +1,52 @@
 .headerContainer {
   background-color: rgb(20, 20, 20);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  padding: 0 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: fixed;
-  top: 2%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  min-width: 550px;
-  padding: 0 30px;
-  height: 80px;
   z-index: 1000;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.headerContainer div{
+.headerLeft,
+.headerCenter,
+.headerRight {
   display: flex;
-  gap: 50px;
-}
-
-.headerAbout{
-  position: relative;
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 500;
-  font-size: 15px;
-  padding: 12px;
-  padding-top: 35px;
-}
-
-.headerAbout::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  opacity: 0;
-  height: 1px;
-  background-color: rgb(255, 255, 255);
-  transition: opacity 0.3s ease;
-}
-
-.headerAbout:hover{
-  color: rgb(255, 255, 255);
-}
-
-.headerAbout:hover::after {
-  opacity: 1;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  align-items: center;
 }
 
 .logo-container {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 23px;
+  gap: 0.5rem;
 }
 
 .logo-img {
-  height: 60px;
-  width: auto;
-  display: block;
-  padding-top: 5px;
+  height: 50px;
   transform: rotate(25deg);
 }
 
 .headerGreenGPT {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: white;
   text-decoration: none;
-  color: rgba(255, 255, 255);
-  font-weight: 700;
-  font-size: 25px;
-  padding: 0;
-  margin: 0;
-  align-items: center;
-  margin-left: -45px;
-  letter-spacing: 1px;
 }
 
-
-.headerGreenGPT::after {
-  content: '';
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  opacity: 0;
-  height: 1px;
-  background-color: rgb(255, 255, 255);
-  transition: opacity 0.3s ease;
+.nav-links {
+  gap: 2rem;
 }
 
-.headerGreenGPT:hover{
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.headerGreenGPT:hover::after {
-  opacity: 1;
-}
-
-.nav-links{
-  margin-left: -80px;
-}
-
-.signOutButton {
-  background: #000;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+.headerAbout {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 500;
   font-size: 1rem;
-  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  height: 80px;
 }
-
-.signOutButton:hover {
-  background: #333;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
