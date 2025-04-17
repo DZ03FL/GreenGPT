@@ -358,14 +358,61 @@ app.delete('/api/goals/:id', async (req, res) => {
   }
 });
 
+app.post('/api/friends/add', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
+      body: JSON.stringify(req.body),
+      credentials: 'include'
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Add friend error:', err.message);
+    res.status(500).json({ error: 'Could not add friend' });
+  }
+});
 
+app.post('/api/friends/respond', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/friends/request.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
+      body: JSON.stringify(req.body), // { friendship_id, action: "accept" or "decline" }
+      credentials: 'include'
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Respond to friend request error:', err.message);
+    res.status(500).json({ error: 'Could not respond to friend request' });
+  }
+});
 
-
-
-
-
-
-
+app.get('/api/friends/list', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
+      credentials: 'include'
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Get friends list error:', err.message);
+    res.status(500).json({ error: 'Could not fetch friends' });
+  }
+});
 
 
 app.listen(5000, () => console.log('Server started on port 5000'));
