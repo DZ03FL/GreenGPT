@@ -109,7 +109,7 @@ const Goals = () => {
   return (
     <div className="goals-container">
       <div className="goals-left">
-        <div className="carousel">Carousel Placeholder</div>
+        <div className="carousel"> <img src="/images/icon.jpg" alt="Icon" className="goal-icon" /></div>
         <h2>Set New Energy Goal</h2>
         <form className="goals-form" onSubmit={handleFormSubmit}>
           <label htmlFor="measure">Enter a Total Energy Limit Goal (kWh)</label>
@@ -137,21 +137,30 @@ const Goals = () => {
       </div>
 
       <div className="goals-right">
-        <h2>Current Goals</h2>
+        <h2>All Goals</h2>
         <div className="currentGoals">
           {goals.length === 0 ? (
             <p>No current goals.</p>
           ) : (
             goals.map((goal) => {
-              const isAchieved = energyUsed <= goal.measure;
+              const goalDate = new Date(goal.duration);
+              const now = new Date();
+              const isExpired = goalDate < now;
+              const isAchieved = !isExpired && energyUsed <= goal.measure;
 
               return (
-                <div key={goal.id} className={`goalItem ${isAchieved ? 'completed' : 'inProgress'}`}>
+                <div key={goal.id} className={`goalItem ${isExpired ? 'expired' : isAchieved ? 'completed' : 'inProgress'}`}>
                   <div className={`goalMarker ${isAchieved ? 'checked' : ''}`}></div>
                   <div className="goalDetails">
                     <div><strong>Energy Limit:</strong> {goal.measure} kWh</div>
                     <div><strong>Deadline:</strong> {new Date(goal.duration).toLocaleDateString()}</div>
-                    <div><strong>Status:</strong> {isAchieved ? 'Goal Met' : 'Over Limit'}</div>
+                    <div><strong>Status:</strong> 
+                      {isExpired 
+                        ? ' Expired' 
+                        : isAchieved 
+                          ? ' Goal Met' 
+                          : ' Over Limit'}
+                    </div>
                   </div>
                   <button className="delete-button" onClick={() => deleteGoal(goal.id)}>
                     🗑
@@ -163,9 +172,7 @@ const Goals = () => {
         </div>
 
         <div className="energyGraph">
-          <h3>Current Energy Graph</h3>
-          <p>Total Energy Used: {energyUsed} kWh</p>
-          <div className="graph-placeholder">Graph Placeholder</div>
+          <h2>Total Energy Used: {energyUsed} kWh</h2>
         </div>
       </div>
     </div>
