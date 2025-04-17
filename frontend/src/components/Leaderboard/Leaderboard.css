@@ -1,10 +1,9 @@
-/* Fullscreen container with padding below fixed header */
 .leaderboard-container {
   min-height: 100vh;
   width: 100%;
   padding: 2rem 4rem;
-  background: #f9f9f9;
-  font-family: Arial, sans-serif;
+  background: #f2f5f7;
+  font-family: 'Segoe UI', Roboto, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,107 +12,113 @@
 
 .leaderboard-container h1 {
   font-size: 2.5rem;
-  color: #222;
-  margin-bottom: 0.5rem;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
   text-align: center;
 }
 
 .leaderboard-container p {
   font-size: 1.1rem;
   color: #555;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   text-align: center;
-  max-width: 800px;
+  max-width: 700px;
 }
 
-/* Toggle Buttons */
-.timeframe-toggle {
-  margin-bottom: 2rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.timeframe-toggle button {
-  padding: 0.5rem 1.5rem;
+/* Refresh button */
+.refresh-button {
+  margin: 1rem 0;
+  padding: 0.75rem 1.5rem;
   border: none;
-  background-color: #e0f7e0;
-  color: #222;
+  border-radius: 999px;
+  background: #4caf50;
+  color: #fff;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.timeframe-toggle button.active,
-.timeframe-toggle button:hover {
-  background-color: #4caf50;
-  color: white;
-  transform: scale(1.05);
+.refresh-button:hover {
+  background: #43a047;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Leaderboard wrapper */
 .leaderboard {
   width: 100%;
-  max-width: 1000px;
+  max-width: 900px;
 }
 
+/* List as grid for consistent spacing */
 .leaderboard-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
+/* Individual leaderboard card */
 .leaderboard-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 1.2rem 1.5rem;
-  margin-bottom: 1rem;
-  transition: box-shadow 0.3s ease;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .leaderboard-item:hover {
-  box-shadow: 0 4px 12px rgba(34, 139, 34, 0.12);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* User Rank, Name, Energy */
+/* User Rank */
 .user-rank {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: #2e8b57;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #2e7d32;
   margin-right: 1rem;
   min-width: 40px;
+  text-align: center;
 }
 
+/* User Name */
 .user-name {
   flex-grow: 1;
   text-align: left;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 600;
   color: #333;
 }
 
+/* Energy Saved */
 .energy-saved {
   font-size: 1rem;
-  color: #228b22;
+  color: #388e3c;
   font-weight: 500;
 }
 
+/* Responsive tweaks */
 @media (max-width: 768px) {
   .leaderboard-container {
-    padding: 2rem;
+    padding: 1.5rem;
   }
 
   .leaderboard-item {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    padding: 1rem;
   }
 
-  .user-name,
-  .energy-saved {
-    text-align: left;
+  .user-rank {
+    margin: 0;
   }
 }

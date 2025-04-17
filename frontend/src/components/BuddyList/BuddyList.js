@@ -4,6 +4,7 @@ import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const Friends = () => {
   useAuthRedirect();
+
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
@@ -46,8 +47,10 @@ const Friends = () => {
     fetchData();
   }, []);
 
-    // Function to respond to friend requests (accept/decline)
+  // Function to respond to friend requests (accept/decline)
   const respondToRequest = async (friendship_id, action) => {
+    setErrorMsg('');
+
     try {
       const response = await fetch('http://localhost:5000/api/friends/respond', {
         method: 'POST',
@@ -58,14 +61,10 @@ const Friends = () => {
 
       const data = await response.json();
       if (response.ok && data.success) {
-        // Refresh data after response
-        setRequests(prev => prev.filter(r => r.friendship_id !== friendship_id));
-        if (action === 'accept') {
-          setFriends(prev => [...prev, { ...data.friend }]);
-        }
-      } 
-      else {
-        setErrorMsg(data.error);
+        // Re-fetch both friends list and pending requests
+        await fetchData();
+      } else {
+        setErrorMsg(data.error || 'Failed to respond to request');
       }
     } catch (err) {
       console.error(err);
@@ -76,42 +75,42 @@ const Friends = () => {
   return (
     <div className="friends-container">
       <h2>Your Friends</h2>
-      {(
-        <>
-          {errorMsg && <p className="error">{errorMsg}</p>}
+      {errorMsg && <p className="error">{errorMsg}</p>}
 
-          <div className="friends-list">
-            {friends.length === 0 ? (
-              <p>You have no friends yet.</p>
-            ) : (
-              friends.map(friend => (
-                <div key={friend.user_id} className="friend-card">
-                  <strong>{friend.username}</strong> <br />
-                  <span>{friend.email}</span>
-                </div>
-              ))
-            )}
-          </div>
+      <div className="friends-list">
+        {friends.length === 0 ? (
+          <p>You have no friends yet.</p>
+        ) : (
+          friends.map(friend => (
+            <div key={friend.user_id} className="friend-card">
+              <strong>{friend.username}</strong><br />
+              <span>{friend.email}</span>
+            </div>
+          ))
+        )}
+      </div>
 
-          <h2>Pending Friend Requests</h2>
-          <div className="requests-list">
-            {requests.length === 0 ? (
-              <p>No incoming friend requests.</p>
-            ) : (
-              requests.map(req => (
-                <div key={req.friendship_id} className="request-card">
-                  <strong>{req.username}</strong> <br />
-                  <span>{req.email}</span>
-                  <div className="action-buttons">
-                    <button onClick={() => respondToRequest(req.friendship_id, 'accept')}>Accept</button>
-                    <button onClick={() => respondToRequest(req.friendship_id, 'decline')}>Decline</button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </>
-      )}
+      <h2>Pending Friend Requests</h2>
+      <div className="requests-list">
+        {requests.length === 0 ? (
+          <p>No incoming friend requests.</p>
+        ) : (
+          requests.map(req => (
+            <div key={req.friendship_id} className="request-card">
+              <strong>{req.username}</strong><br />
+              <span>{req.email}</span>
+              <div className="action-buttons">
+                <button onClick={() => respondToRequest(req.friendship_id, 'accept')}>
+                  Accept
+                </button>
+                <button onClick={() => respondToRequest(req.friendship_id, 'decline')}>
+                  Decline
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
