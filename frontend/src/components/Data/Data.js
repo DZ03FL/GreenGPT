@@ -32,7 +32,7 @@ const Data = () => {
   useEffect(() => {
     const fetchMonthlyEnergy = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/energy-monthly', {
+        const res = await fetch('https://greengpt.onrender.com/api/energy-monthly', {
           credentials: 'include',
         });
         const data = await res.json();

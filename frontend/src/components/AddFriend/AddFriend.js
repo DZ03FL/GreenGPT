@@ -13,7 +13,7 @@ const AddFriend = () => {
   const [activeMessageType, setActiveMessageType] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/users', {
+    fetch('https://greengpt.onrender.com/api/users', {
       credentials: 'include'
     })
       .then(res => res.json())
@@ -28,7 +28,7 @@ const AddFriend = () => {
   }, []);
 
   const handleAddFriend = (user_id, username) => {
-    fetch('http://localhost:5000/api/friends/add', {
+    fetch('https://greengpt.onrender.com/api/friends/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

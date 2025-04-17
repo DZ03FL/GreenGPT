@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/auth/status', {
+        const res = await fetch('https://greengpt.onrender.com/api/auth/status', {
           method: 'GET',
           credentials: 'include',
         });
