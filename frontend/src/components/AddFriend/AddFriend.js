@@ -5,6 +5,9 @@ const AddFriend = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUserID, setSelectedUserID] = useState(null);
+  const [activeMessage, setActiveMessage] = useState('');
+  const [activeMessageUserID, setActiveMessageUserID] = useState(null);
+  const [activeMessageType, setActiveMessageType] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:5000/api/users', {
@@ -21,21 +24,31 @@ const AddFriend = () => {
       });
   }, []);
 
-  const handleAddFriend = (friendId) => {
-    fetch('http://localhost:5000/api/add-friend', {
+  const handleAddFriend = (user_id, username) => {
+    fetch('http://localhost:5000/api/friends/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ friend_id: friendId }),
+      body: JSON.stringify({ username }),
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log("Added Friend")
+        if (data.success || !data.error) {
+          setActiveMessage(`Friend request sent to ${username}!`);
+          setActiveMessageUserID(user_id);
+          setActiveMessageType('success');
+        } 
+        else {
+          throw new Error(data.error);
+        }
         setSelectedUserID(null);
       })
       .catch((err) => {
+        setActiveMessage(`Failed to add friend: ${err.message}`);
+        setActiveMessageUserID(user_id);
+        setActiveMessageType('error');
         console.error('Error adding friend:', err);
       });
   };
@@ -59,11 +72,16 @@ const AddFriend = () => {
             <div>
             {selectedUserID === user.user_id && <button className='add-friend-button' onClick={(e) => {
               e.stopPropagation();
-              handleAddFriend(user.user_id)
+              handleAddFriend(user.user_id, user.username)
             }}>Add Friend</button>}
+            
+            {activeMessageUserID === user.user_id && (
+              <div className={activeMessageType === 'success' ? 'success' : 'error'}>
+                {activeMessage}
+              </div>
+            )}
             </div>
           </div>
-          
         ))}
       </div>
     </div>

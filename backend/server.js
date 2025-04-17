@@ -379,7 +379,7 @@ app.post('/api/friends/add', async (req, res) => {
 
 app.post('/api/friends/respond', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/request.php`, {
+    const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -414,5 +414,22 @@ app.get('/api/friends/list', async (req, res) => {
   }
 });
 
+app.get('/api/friends/requests', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
+      },
+      credentials: 'include'
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Error fetching friend requests:', err.message);
+    res.status(500).json({ error: 'Could not fetch friend requests' });
+  }
+});
 
 app.listen(5000, () => console.log('Server started on port 5000'));
