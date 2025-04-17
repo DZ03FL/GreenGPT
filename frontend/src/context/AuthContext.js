@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
         });
 
         const data = await res.json();
-        setIsLoggedIn(data.authenicated);
+        setIsLoggedIn(data.authenticated);
       } catch (err) {
         console.error('Error checking login status:', err);
         setIsLoggedIn(false);

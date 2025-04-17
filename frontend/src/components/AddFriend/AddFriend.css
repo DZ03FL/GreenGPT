@@ -135,4 +135,31 @@
   .friend-icon {
     margin-bottom: 1rem;
   }
+
+  .success {
+    color: green;
+    margin-bottom: 10px;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }
 }
+
+.user-message-container{
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 4.5rem; 
+  gap: 0.4rem;
+}
+

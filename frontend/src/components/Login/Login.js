@@ -49,11 +49,11 @@ const Login = () => {
         <h2>Login to Your Account</h2>
         <form onSubmit={handleSubmit} className="login-form">
           {errorMsg && <p className="error">{errorMsg}</p>}
-          <label htmlFor="email">Email</label>
+          <label htmlFor="email">Email/Username</label>
           <input
             id="email"
             type="text"
-            placeholder="Enter your email"
+            placeholder="Enter your email/username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required

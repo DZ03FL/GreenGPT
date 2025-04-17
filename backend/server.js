@@ -86,6 +86,8 @@ async function getUserIdFromSession(req) {
   return data.user_id;
 }
 
+// User/Authentication routes
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/register.php`, {
@@ -164,6 +166,8 @@ app.get('/api/users', async (req, res) => {
 });
 
 //app.use('/api/auth', authRoute);
+
+// Token usage and energy estimate routes
 
 app.post('/api/token-usage', async (req, res) => {
   const { promptTokens, responseTokens, timestamp } = req.body;
@@ -295,6 +299,8 @@ app.get('/api/goals', async (req, res) => {
   }
 });
 
+// Fetch and update goals
+
 app.post('/api/goals', async (req, res) => {
   const { duration, energy_limit } = req.body;
 
@@ -358,13 +364,14 @@ app.delete('/api/goals/:id', async (req, res) => {
   }
 });
 
+// Friendship handling routes
+
 app.post('/api/friends/add', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body),
       credentials: 'include'
@@ -379,11 +386,10 @@ app.post('/api/friends/add', async (req, res) => {
 
 app.post('/api/friends/respond', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/request.php`, {
+    const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body), // { friendship_id, action: "accept" or "decline" }
       credentials: 'include'
@@ -402,7 +408,6 @@ app.get('/api/friends/list', async (req, res) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
     });
@@ -411,6 +416,23 @@ app.get('/api/friends/list', async (req, res) => {
   } catch (err) {
     console.error('Get friends list error:', err.message);
     res.status(500).json({ error: 'Could not fetch friends' });
+  }
+});
+
+app.get('/api/friends/requests', async (req, res) => {
+  try {
+    const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
+    const data = await response.json();
+    res.status(response.status).json(data);
+  } catch (err) {
+    console.error('Error fetching friend requests:', err.message);
+    res.status(500).json({ error: 'Could not fetch friend requests' });
   }
 });
 
@@ -435,30 +457,6 @@ app.get('/api/energy-monthly', async (req, res) => {
   }
 });
 
-app.get('/api/leaderboard', async (req, res) => {
-  try {
-    // get current month (1–12)
-    const currentMonth = new Date().getMonth() + 1;
-    const sql = `
-      SELECT 
-        u.username AS name,
-        ROUND(eu.energy_used_wh, 2) AS energySaved
-      FROM energy_usage AS eu
-      JOIN users AS u
-        ON u.user_id = eu.user_id
-      WHERE eu.month = ?
-      ORDER BY eu.energy_used_wh ASC
-      LIMIT 10;
-    `;
-    connection.query(sql, [currentMonth], (err, rows) => {
-      if (err) return res.status(500).json({ error: err.message });
-      // rows = [{ name: 'alice', energySaved: 123.45 }, …]
-      res.json(rows);
-    });
-  } catch (err) {
-    console.error('Leaderboard error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
+
 
 app.listen(5000, () => console.log('Server started on port 5000'));
