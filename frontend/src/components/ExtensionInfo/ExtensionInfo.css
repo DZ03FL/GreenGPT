@@ -35,3 +35,45 @@
 .description-container p{
   font-size: 18px;
 }
+
+.install-steps {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+  font-size: 1.05rem;
+  color: #333;
+  line-height: 1.7;
+  counter-reset: step-counter;
+}
+
+.install-steps li {
+  position: relative;
+  padding-left: 2.5rem;
+  margin-bottom: 1rem;
+  background: #f9f9f9;
+  border-left: 4px solid #4caf50;
+  border-radius: 4px;
+  padding: 1rem 1rem 1rem 2.5rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.install-steps li::before {
+  content: counter(step-counter);
+  counter-increment: step-counter;
+  position: absolute;
+  top: 1.1rem;
+  left: 1rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-align: center;
+  line-height: 1.4rem;
+  border-radius: 50%;
+}
+
+.install-steps strong {
+  color: #2e8b57;
+}
