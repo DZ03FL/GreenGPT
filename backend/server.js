@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const fetch = fetchCookie(nodeFetch);
-const PHP_BACKEND = 'https://cise.ufl.edu/~t.lu/cis4930/php-backend';
+const PHP_BACKEND = 'http://localhost:8000';
 
 app.use(express.json());
 
@@ -21,7 +21,6 @@ app.use(cors({
     'https://chat.openai.com',
     'https://chatgpt.com',
     'https://www.chatgpt.com',
-    'https://greengpt-steel.vercel.app'
   ],
   credentials: true,
 }));
