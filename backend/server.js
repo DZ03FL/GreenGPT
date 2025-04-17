@@ -435,6 +435,30 @@ app.get('/api/energy-monthly', async (req, res) => {
   }
 });
 
-
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    // get current month (1–12)
+    const currentMonth = new Date().getMonth() + 1;
+    const sql = `
+      SELECT 
+        u.username AS name,
+        ROUND(eu.energy_used_wh, 2) AS energySaved
+      FROM energy_usage AS eu
+      JOIN users AS u
+        ON u.user_id = eu.user_id
+      WHERE eu.month = ?
+      ORDER BY eu.energy_used_wh ASC
+      LIMIT 10;
+    `;
+    connection.query(sql, [currentMonth], (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      // rows = [{ name: 'alice', energySaved: 123.45 }, …]
+      res.json(rows);
+    });
+  } catch (err) {
+    console.error('Leaderboard error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.listen(5000, () => console.log('Server started on port 5000'));
