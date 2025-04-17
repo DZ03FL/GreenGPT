@@ -1,7 +1,10 @@
 import {useState, useEffect} from 'react'
 import './AddFriend.css'
+import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const AddFriend = () => {
+  useAuthRedirect();
+  
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedUserID, setSelectedUserID] = useState(null);

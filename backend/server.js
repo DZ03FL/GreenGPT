@@ -86,6 +86,8 @@ async function getUserIdFromSession(req) {
   return data.user_id;
 }
 
+// User/Authentication routes
+
 app.post('/api/auth/register', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/controllers/register.php`, {
@@ -164,6 +166,8 @@ app.get('/api/users', async (req, res) => {
 });
 
 //app.use('/api/auth', authRoute);
+
+// Token usage and energy estimate routes
 
 app.post('/api/token-usage', async (req, res) => {
   const { promptTokens, responseTokens, timestamp } = req.body;
@@ -295,6 +299,8 @@ app.get('/api/goals', async (req, res) => {
   }
 });
 
+// Fetch and update goals
+
 app.post('/api/goals', async (req, res) => {
   const { duration, energy_limit } = req.body;
 
@@ -358,13 +364,14 @@ app.delete('/api/goals/:id', async (req, res) => {
   }
 });
 
+// Friendship handling routes
+
 app.post('/api/friends/add', async (req, res) => {
   try {
     const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body),
       credentials: 'include'
@@ -383,7 +390,6 @@ app.post('/api/friends/respond', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body), // { friendship_id, action: "accept" or "decline" }
       credentials: 'include'
@@ -402,7 +408,6 @@ app.get('/api/friends/list', async (req, res) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
     });
@@ -420,7 +425,6 @@ app.get('/api/friends/requests', async (req, res) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
     });
