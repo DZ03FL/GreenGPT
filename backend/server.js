@@ -83,6 +83,9 @@ async function parsePhpJson(response) {
     .join('\n')  // ← THIS FIX
     .trim();
 
+
+console.log('❓ Char at fail index 57:', cleanedLines[57]);
+
   console.log('🧼 Final cleaned string to parse:\n', cleanedLines);
   console.log('🧾 Cleaned response is array?', cleanedLines.startsWith('['));
   console.log('🧾 Cleaned response is object?', cleanedLines.startsWith('{'));
