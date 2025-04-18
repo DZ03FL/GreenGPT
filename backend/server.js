@@ -467,22 +467,17 @@ app.get('/api/friends/list', async (req, res) => {
         'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
-      
     });
 
-    const raw = await response.text();
-    console.log('🐛 Raw response from friendlist.php:\n', raw); // <== CRUCIAL LINE
-
-    const jsonStart = raw.indexOf('{');
-    if (jsonStart === -1) throw new Error('Invalid response from PHP');
-
-    const data = JSON.parse(raw.slice(jsonStart));
+    const data = await parsePhpJson(response);  // only parse once
     res.status(response.status).json(data);
+
   } catch (err) {
     console.error('friendlist error:', err);
     res.status(500).json({ error: 'Could not fetch friends' });
   }
 });
+
 
 // Fetches the list of pending friend requests for the logged-in user
 app.get('/api/friends/requests', async (req, res) => {
@@ -498,7 +493,6 @@ app.get('/api/friends/requests', async (req, res) => {
     const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
-    console.error('❌ /api/friends/requests error:', err); // <--- make sure this is in your logs
     res.status(500).json({ error: 'Could not fetch requests' });
   }
 });
@@ -533,6 +527,7 @@ app.get('/api/leaderboard', async (req, res) => {
       res.json(rows);
     });
   } catch (err) {
+    
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
