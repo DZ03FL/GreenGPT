@@ -202,28 +202,33 @@ app.get('/api/users', async (req, res) => {
 // Token usage and energy estimate routes
 
 app.post('/api/token-usage', async (req, res) => {
+  console.log("📥 token-usage POST received:", req.body);
+
   const { promptTokens, responseTokens, timestamp } = req.body;
+
+  if (!promptTokens || !responseTokens || !timestamp) {
+    console.warn("⚠️ Missing fields in token-usage:", req.body);
+    return res.status(400).json({ error: "Missing fields" });
+  }
 
   try {
     const user_id = await getUserIdFromSession(req);
-    console.log("Logging tokens for user:", user_id);
+    console.log("✅ User ID for token-usage:", user_id);
+    
+    const sql = `INSERT INTO tokens (user_id, prompt_tokens, completion_tokens, timestamp)
+                 VALUES (?, ?, ?, ?)`;
 
-    const sql = `
-      INSERT INTO tokens (user_id, prompt_tokens, completion_tokens, timestamp)
-      VALUES (?, ?, ?, ?)
-    `;
-
-    connection.query(
-      sql,
-      [user_id, promptTokens, responseTokens, new Date(timestamp)],
-      (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
-        res.status(201).json({ message: 'Token usage recorded', id: result.insertId });
+    connection.query(sql, [user_id, promptTokens, responseTokens, new Date(timestamp)], (err, result) => {
+      if (err) {
+        console.error("❌ MySQL insert error:", err.message);
+        return res.status(500).json({ error: "Database insert failed" });
       }
-    );
+      console.log("✅ Token usage logged:", result.insertId);
+      res.status(201).json({ message: "Token usage recorded" });
+    });
   } catch (err) {
-    console.error("Token usage error:", err.message);
-    res.status(401).json({ error: 'Unauthorized' });
+    console.error("🚫 User auth error:", err.message);
+    res.status(401).json({ error: "Unauthorized" });
   }
 });
 
