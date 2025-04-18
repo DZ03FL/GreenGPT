@@ -79,8 +79,13 @@ async function parsePhpJson(response) {
   const jsonStart = raw.indexOf('{') !== -1 ? raw.indexOf('{') : raw.indexOf('[');
   if (jsonStart === -1) throw new Error('Invalid response from PHP');
 
-  const cleaned = raw.slice(jsonStart);
-  return JSON.parse(cleaned);
+  const cleaned = raw.slice(jsonStart).trim(); // trim removes any trailing or leading garbage
+  try {
+    return JSON.parse(cleaned);
+  } catch (err) {
+    console.error('🐞 Failed to parse cleaned JSON:\n', cleaned);
+    throw err;
+  }
 }
 
 
@@ -482,6 +487,7 @@ app.get('/api/friends/requests', async (req, res) => {
     const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
+    console.error('❌ /api/friends/requests error:', err); // <--- make sure this is in your logs
     res.status(500).json({ error: 'Could not fetch requests' });
   }
 });
