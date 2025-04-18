@@ -2,6 +2,8 @@
 
 ---
 
+Visit our website: https://green-gpt-dusky.vercel.app/
+
 ## Website Overview
 
 The website provides the following features:
@@ -27,6 +29,7 @@ The website provides the following features:
 
 ### 3. **Track Usage**
 - The extension automatically logs ChatGPT token usage.
+- Vist ChatGPT and ask it some questions.
 - Visit the dashboard to view your energy consumption.
 
 ### 4. **Set Goals**
