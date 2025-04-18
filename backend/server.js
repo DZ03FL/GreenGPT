@@ -76,15 +76,16 @@ async function parsePhpJson(response) {
   const raw = await response.text();
   console.log('🐛 Raw response from PHP:\n', raw);
 
-  // Remove any lines starting with shebangs or garbage
+  // Remove shebang lines only
   const cleanedLines = raw
     .split('\n')
-    .filter(line => !line.trim().startsWith('#!'))  // Remove shebang
-    .join('')
+    .filter(line => !line.trim().startsWith('#!'))
+    .join('\n')  // ← THIS FIX
     .trim();
 
-    console.log('🧾 Cleaned response is array?', cleanedLines.startsWith('['));
-    console.log('🧾 Cleaned response is object?', cleanedLines.startsWith('{'));
+  console.log('🧼 Final cleaned string to parse:\n', cleanedLines);
+  console.log('🧾 Cleaned response is array?', cleanedLines.startsWith('['));
+  console.log('🧾 Cleaned response is object?', cleanedLines.startsWith('{'));
 
   try {
     return JSON.parse(cleanedLines);
@@ -93,6 +94,7 @@ async function parsePhpJson(response) {
     throw err;
   }
 }
+
 
 
 
