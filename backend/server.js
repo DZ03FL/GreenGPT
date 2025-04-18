@@ -440,7 +440,7 @@ app.post('/api/friends/respond', async (req, res) => {
 // Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
   try {
-    const response = await fetch('${PHP_BACKEND}/friends/friendlist.php', {
+    const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
