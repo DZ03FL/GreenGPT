@@ -74,11 +74,15 @@ connection.connect((err) => {
 
 async function parsePhpJson(response) {
   const raw = await response.text();
-  console.log('PHP raw response:', raw);
-  const jsonStart = raw.indexOf('{');
+  console.log('🐛 Raw response from PHP:\n', raw);
+
+  const jsonStart = raw.indexOf('{') !== -1 ? raw.indexOf('{') : raw.indexOf('[');
   if (jsonStart === -1) throw new Error('Invalid response from PHP');
-  return JSON.parse(raw.slice(jsonStart));
+
+  const cleaned = raw.slice(jsonStart);
+  return JSON.parse(cleaned);
 }
+
 
 async function getUserIdFromSession(req) {
   const response = await fetch(`${PHP_BACKEND}/controllers/whoami.php`, {
