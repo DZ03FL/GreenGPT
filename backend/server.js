@@ -74,6 +74,7 @@ connection.connect((err) => {
 
 async function parsePhpJson(response) {
   const raw = await response.text();
+  console.log('PHP raw response:', raw);
   const jsonStart = raw.indexOf('{');
   if (jsonStart === -1) throw new Error('Invalid response from PHP');
   return JSON.parse(raw.slice(jsonStart));
@@ -446,6 +447,7 @@ app.get('/api/friends/list', async (req, res) => {
         'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
+      
     });
 
     const raw = await response.text();
@@ -457,7 +459,7 @@ app.get('/api/friends/list', async (req, res) => {
     const data = JSON.parse(raw.slice(jsonStart));
     res.status(response.status).json(data);
   } catch (err) {
-    console.error('💥 Error in /api/friends/list:', err.message);
+    console.error('friendlist error:', err);
     res.status(500).json({ error: 'Could not fetch friends' });
   }
 });
