@@ -12,7 +12,7 @@ const ExtensionInfo = () => {
       Track the electricity and water behind ChatGPT’s cooling process, visualize your usage, and compete with friends to become the most environmentally conscious chatter!
       </p>
       <a
-        href="https://cise.ufl.edu/~t.lu/cis4930/extension/greengpt.zip"
+        href="https://cise.ufl.edu/~t.lu/cis4930/extension/extension.zip"
         className="arrow heading3"
         target="_blank"
         rel="noreferrer"
@@ -24,7 +24,7 @@ const ExtensionInfo = () => {
         <h4>How to Install the Extension</h4>
           <ol className="install-steps">
             <li>
-              <strong>Download:</strong> <a href="https://cise.ufl.edu/~t.lu/cis4930/extension/greengpt.zip" target="_blank" rel="noreferrer">Click here to download the ZIP</a>
+              <strong>Download:</strong> <a href="https://cise.ufl.edu/~t.lu/cis4930/extension/extension.zip" target="_blank" rel="noreferrer">Click here to download the ZIP</a>
             </li>
             <li><strong>Extract:</strong> Unzip the downloaded file to a folder (e.g., `greengpt`).</li>
             <li><strong>Open Chrome:</strong> Go to <code>chrome://extensions</code></li>
