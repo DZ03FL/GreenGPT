@@ -76,13 +76,15 @@ async function parsePhpJson(response) {
   const raw = await response.text();
   console.log('🐛 Raw response from PHP:\n', raw);
 
-  // Strip out any leading shebangs or garbage
-  const lines = raw.split('\n').filter(line =>
-    line.trim().startsWith('{') || line.trim().startsWith('[')
-  );
+  // Find where JSON starts – either { or [
+  const jsonStart = raw.indexOf('{') !== -1 ? raw.indexOf('{') : raw.indexOf('[');
+  const jsonEnd = raw.lastIndexOf('}') !== -1 ? raw.lastIndexOf('}') : raw.lastIndexOf(']');
 
-  const cleaned = lines.join('\n').trim();
+  if (jsonStart === -1 || jsonEnd === -1 || jsonEnd <= jsonStart) {
+    throw new Error('Invalid JSON boundaries in PHP response');
+  }
 
+  const cleaned = raw.slice(jsonStart, jsonEnd + 1).trim(); // include closing brace
   try {
     return JSON.parse(cleaned);
   } catch (err) {
@@ -90,6 +92,7 @@ async function parsePhpJson(response) {
     throw err;
   }
 }
+
 
 
 
