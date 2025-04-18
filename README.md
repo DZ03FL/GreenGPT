@@ -58,4 +58,4 @@ The website provides the following features:
 
 ## Entity-Relationship Diagram (ERD)
 
-![ER diagram (crow's foot)](https://github.com/user-attachments/assets/e39b751c-313d-4079-a425-2ffb4fbe6a44)
+![ER diagram (crow's foot)](/erd.png)
