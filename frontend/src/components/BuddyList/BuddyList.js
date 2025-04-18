@@ -17,12 +17,16 @@ const Friends = () => {
       const [friendsRes, requestsRes] = await Promise.all([
         fetch('https://greengpt.onrender.com/api/friends/list', {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json',
+          'Cookie': req.headers.cookie || ''
+        },
           credentials: 'include',
         }),
         fetch('https://greengpt.onrender.com/api/friends/requests', {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json',
+          'Cookie': req.headers.cookie || ''
+        },
           credentials: 'include',
         }),
       ]);
