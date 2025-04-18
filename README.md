@@ -47,7 +47,7 @@ The website provides the following features:
 
 ## Chrome Extension Installation Guide
 
-1. **Download:** [GreenGPT ZIP](https://cise.ufl.edu/~t.lu/cis4930/extension/greengpt.zip)
+1. **Download:** [GreenGPT ZIP](https://cise.ufl.edu/~t.lu/cis4930/extension/extension.zip)
 2. **Extract:** Unzip the file to a folder (e.g., `greengpt`)
 3. **Open Chrome:** Visit `chrome://extensions`
 4. **Enable Developer Mode:** Toggle the switch on in the top right corner
