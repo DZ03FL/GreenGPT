@@ -4,6 +4,7 @@ import nodeFetch from 'node-fetch';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mysql from 'mysql2';
+import cookieParser from 'cookie-parser';
 
 
 
@@ -14,6 +15,8 @@ const fetch = fetchCookie(nodeFetch);
 const PHP_BACKEND = 'https://cise.ufl.edu/~t.lu/cis4930/php-backend';
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use(cors({
   origin: [
