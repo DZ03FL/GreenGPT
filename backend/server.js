@@ -4,6 +4,7 @@ import nodeFetch from 'node-fetch';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import mysql from 'mysql2';
+import cookieParser from 'cookie-parser';
 
 
 
@@ -14,6 +15,8 @@ const fetch = fetchCookie(nodeFetch);
 const PHP_BACKEND = 'http://localhost:8000';
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use(cors({
   origin: [
@@ -21,6 +24,8 @@ app.use(cors({
     'https://chat.openai.com',
     'https://chatgpt.com',
     'https://www.chatgpt.com',
+    'https://greengpt-theta.vercel.app'
+
   ],
   credentials: true,
 }));
@@ -68,6 +73,37 @@ connection.connect((err) => {
 //   }
 // });
 
+async function parsePhpJson(response) {
+  const raw = await response.text();
+  console.log('🐛 Raw response from PHP:\n', raw);
+
+  // Remove shebang lines only
+  const cleanedLines = raw
+    .split('\n')
+    .filter(line => !line.trim().startsWith('#!'))
+    .join('\n')  // ← THIS FIX
+    .trim();
+
+
+console.log('❓ Char at fail index 57:', cleanedLines[57]);
+
+  console.log('🧼 Final cleaned string to parse:\n', cleanedLines);
+  console.log('🧾 Cleaned response is array?', cleanedLines.startsWith('['));
+  console.log('🧾 Cleaned response is object?', cleanedLines.startsWith('{'));
+
+  try {
+    return JSON.parse(cleanedLines);
+  } catch (err) {
+    console.error('🐞 Failed to parse cleaned JSON:\n', cleanedLines);
+    throw err;
+  }
+}
+
+
+
+
+
+
 async function getUserIdFromSession(req) {
   const response = await fetch(`${PHP_BACKEND}/controllers/whoami.php`, {
     method: 'GET',
@@ -82,7 +118,7 @@ async function getUserIdFromSession(req) {
     throw new Error('User not authenticated');
   }
 
-  const data = await response.json();
+  const data = await parsePhpJson(response);
   return data.user_id;
 }
 
@@ -96,7 +132,7 @@ app.post('/api/auth/register', async (req, res) => {
       body: JSON.stringify(req.body),
       credentials: 'include', 
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
     console.error(err);
@@ -113,7 +149,7 @@ app.post('/api/auth/login', async (req, res) => {
       body: JSON.stringify(req.body),
       credentials: 'include', 
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
     console.error(err);
@@ -129,7 +165,7 @@ app.get('/api/auth/status', async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
     console.error('Status check error:', err);
@@ -144,7 +180,7 @@ app.post('/api/auth/logout', async (req, res) => {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
     console.error('Logout error:', err);
@@ -161,7 +197,6 @@ app.get('/api/users', async (req, res) => {
       console.error("Error fetching users:", err.message);
       return res.status(500).json({ error: "Database error" });
     }
-
     res.json(results); 
   });
 });
@@ -275,6 +310,26 @@ app.post('/api/energy-estimate', async (req, res) => {
   }
 });
 
+app.get('/api/energy-monthly', async (req, res) => {
+  try {
+    const user_id = await getUserIdFromSession(req);
+    const sql = `
+      SELECT month, SUM(energy_used_wh) AS total
+      FROM energy_usage
+      WHERE user_id = ?
+      GROUP BY month
+      ORDER BY month
+    `;
+    connection.query(sql, [user_id], (err, results) => {
+      if (err) return res.status(500).json({ error: 'Database error' });
+      res.json(results); 
+    });
+  } catch (err) {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
+
 app.get('/api/goals', async (req, res) => {
   try {
     const user_id = await getUserIdFromSession(req);
@@ -374,14 +429,14 @@ app.post('/api/friends/add', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
       },
       body: JSON.stringify(req.body),
       credentials: 'include'
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
-    console.error('Add friend error:', err.message);
     res.status(500).json({ error: 'Could not add friend' });
   }
 });
@@ -393,17 +448,18 @@ app.post('/api/friends/respond', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
       },
-      body: JSON.stringify(req.body), // { friendship_id, action: "accept" or "decline" }
+      body: JSON.stringify(req.body),
       credentials: 'include'
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
-    console.error('Respond to friend request error:', err.message);
-    res.status(500).json({ error: 'Could not respond to friend request' });
+    res.status(500).json({ error: 'Could not respond to request' });
   }
 });
+
 
 // Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
@@ -412,16 +468,20 @@ app.get('/api/friends/list', async (req, res) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
     });
-    const data = await response.json();
+
+    const data = await parsePhpJson(response);  // only parse once
     res.status(response.status).json(data);
+
   } catch (err) {
-    console.error('Get friends list error:', err.message);
+    console.error('friendlist error:', err);
     res.status(500).json({ error: 'Could not fetch friends' });
   }
 });
+
 
 // Fetches the list of pending friend requests for the logged-in user
 app.get('/api/friends/requests', async (req, res) => {
@@ -430,90 +490,52 @@ app.get('/api/friends/requests', async (req, res) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+        'Cookie': req.headers.cookie || ''
       },
       credentials: 'include'
     });
-    const data = await response.json();
+    const data = await parsePhpJson(response);
     res.status(response.status).json(data);
   } catch (err) {
-    console.error('Error fetching friend requests:', err.message);
-    res.status(500).json({ error: 'Could not fetch friend requests' });
+    res.status(500).json({ error: 'Could not fetch requests' });
   }
 });
 
 // Fetch monthly energy usage data
 
-app.get('/api/energy-monthly', async (req, res) => {
-  try {
-    const user_id = await getUserIdFromSession(req);
-
-    const sql = `
-      SELECT month, SUM(energy_used_wh) AS total
-      FROM energy_usage
-      WHERE user_id = ?
-      GROUP BY month
-      ORDER BY month
-    `;
-
-    connection.query(sql, [user_id], (err, results) => {
-      if (err) return res.status(500).json({ error: 'Database error' });
-      res.json(results); 
-    });
-  } catch (err) {
-    res.status(401).json({ error: 'Unauthorized' });
-  }
-});
-
 app.get('/api/leaderboard', async (req, res) => {
   try {
-    // User ID from session
     const me = await getUserIdFromSession(req);
+    const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', 'Cookie': req.headers.cookie || '' },
+      credentials: 'include'
+    });
 
-    // Fetch only friends of the user
-    const friendsRes = await fetch(
-      `${PHP_BACKEND}/friends/friendlist.php`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json', 'Cookie': req.headers.cookie || '' },
-        credentials: 'include'
-      }
-    );
-    if (!friendsRes.ok) {
-      return res.status(500).json({ error: 'Failed to load friends list' });
-    }
-    const friends = await friendsRes.json();
+    const friends = await parsePhpJson(response);
     const friendIds = friends.map(f => f.user_id);
-    if (friendIds.length === 0) {
-      return res.json([]);                     // No friends, return empty array
-    }
-
-    // Ensures the logged-in user is always included in the leaderboard
     if (!friendIds.includes(me)) friendIds.push(me);
-
-    // Fetch data from DB and calculate leaderboard
     const thisMonth = new Date().getMonth() + 1;
+
     const sql = `
-      SELECT 
-        u.username AS name,
-        ROUND(eu.energy_used_wh, 2) AS energySaved
+      SELECT u.username AS name, ROUND(eu.energy_used_wh, 2) AS energySaved
       FROM energy_usage AS eu
-      JOIN users AS u
-        ON u.user_id = eu.user_id
-      WHERE eu.month = ?
-        AND eu.user_id IN (?)
+      JOIN users AS u ON u.user_id = eu.user_id
+      WHERE eu.month = ? AND eu.user_id IN (?)
       ORDER BY eu.energy_used_wh ASC
       LIMIT 10
     `;
+
     connection.query(sql, [thisMonth, friendIds], (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json(rows);
     });
-
   } catch (err) {
-    console.error('Leaderboard route error:', err);
+    
     res.status(401).json({ error: 'Unauthorized' });
   }
 });
+
 
 app.get('/', (req, res) => {
   res.send('GreenGPT backend is running!');

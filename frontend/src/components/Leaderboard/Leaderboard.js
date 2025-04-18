@@ -5,7 +5,7 @@ import useAuthRedirect from '../../hooks/useAuthRedirect';
 const Leaderboard = () => {
   useAuthRedirect();
   const [leaderboardData, setLeaderboardData] = useState([]);
-  const API = 'http://localhost:5000/api/leaderboard';
+  const API = 'https://greengpt.onrender.com/api/leaderboard';
 
   const fetchBoard = async () => {
     try {

@@ -12,7 +12,7 @@ const Goals = () => {
 
   const fetchGoals = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/goals', {
+      const res = await fetch('https://greengpt.onrender.com/api/goals', {
         credentials: 'include',
       });
       const data = await res.json();
@@ -35,7 +35,7 @@ const Goals = () => {
 
   const fetchEnergyEstimate = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/energy-estimate', {
+      const res = await fetch('https://greengpt.onrender.com/api/energy-estimate', {
         credentials: 'include',
       });
       const data = await res.json();
@@ -64,7 +64,7 @@ const Goals = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:5000/api/goals', {
+      const res = await fetch('https://greengpt.onrender.com/api/goals', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +89,7 @@ const Goals = () => {
 
   const deleteGoal = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/goals/${id}`, {
+      const res = await fetch(`https://greengpt.onrender.com/api/goals/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });

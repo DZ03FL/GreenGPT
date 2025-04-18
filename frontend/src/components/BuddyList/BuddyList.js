@@ -15,14 +15,14 @@ const Friends = () => {
 
     try {
       const [friendsRes, requestsRes] = await Promise.all([
-        fetch('http://localhost:5000/api/friends/list', {
+        fetch('https://greengpt.onrender.com/api/friends/list', {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json'},
           credentials: 'include',
         }),
-        fetch('http://localhost:5000/api/friends/requests', {
+        fetch('https://greengpt.onrender.com/api/friends/requests', {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json',},
           credentials: 'include',
         }),
       ]);
@@ -52,7 +52,7 @@ const Friends = () => {
     setErrorMsg('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/friends/respond', {
+      const response = await fetch('https://greengpt.onrender.com/api/friends/respond', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
