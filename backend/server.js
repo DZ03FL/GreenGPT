@@ -76,10 +76,13 @@ async function parsePhpJson(response) {
   const raw = await response.text();
   console.log('🐛 Raw response from PHP:\n', raw);
 
-  const jsonStart = raw.indexOf('{') !== -1 ? raw.indexOf('{') : raw.indexOf('[');
-  if (jsonStart === -1) throw new Error('Invalid response from PHP');
+  // Strip out any leading shebangs or garbage
+  const lines = raw.split('\n').filter(line =>
+    line.trim().startsWith('{') || line.trim().startsWith('[')
+  );
 
-  const cleaned = raw.slice(jsonStart).trim(); // trim removes any trailing or leading garbage
+  const cleaned = lines.join('\n').trim();
+
   try {
     return JSON.parse(cleaned);
   } catch (err) {
@@ -87,6 +90,7 @@ async function parsePhpJson(response) {
     throw err;
   }
 }
+
 
 
 async function getUserIdFromSession(req) {
