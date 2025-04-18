@@ -11,7 +11,8 @@ dotenv.config();
 
 const app = express();
 const fetch = fetchCookie(nodeFetch);
-const PHP_BACKEND = 'http://localhost:8000';
+//const PHP_BACKEND = 'http://localhost:8000';
+const API_BASE = process.env.REACT_APP_API_URL;
 
 app.use(express.json());
 
@@ -69,7 +70,7 @@ connection.connect((err) => {
 // });
 
 async function getUserIdFromSession(req) {
-  const response = await fetch(`${PHP_BACKEND}/controllers/whoami.php`, {
+  const response = await fetch(`${API_BASE}/controllers/whoami.php`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -90,7 +91,7 @@ async function getUserIdFromSession(req) {
 
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/controllers/register.php`, {
+    const response = await fetch(`${API_BASE}/controllers/register.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req.body),
@@ -107,7 +108,7 @@ app.post('/api/auth/register', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/controllers/login.php`, {
+    const response = await fetch(`${API_BASE}/controllers/login.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(req.body),
@@ -124,7 +125,7 @@ app.post('/api/auth/login', async (req, res) => {
 // Check login status
 app.get('/api/auth/status', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/controllers/status.php`, {
+    const response = await fetch(`${API_BASE}/controllers/status.php`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -139,7 +140,7 @@ app.get('/api/auth/status', async (req, res) => {
 
 app.post('/api/auth/logout', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/controllers/logout.php`, {
+    const response = await fetch(`${API_BASE}/controllers/logout.php`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -370,7 +371,7 @@ app.delete('/api/goals/:id', async (req, res) => {
 // Sends a friend request to a user if the user exists and is not already a friend
 app.post('/api/friends/add', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/add_friend.php`, {
+    const response = await fetch(`${API_BASE}/friends/add_friend.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -389,7 +390,7 @@ app.post('/api/friends/add', async (req, res) => {
 // Function to accept or decline a friend request
 app.post('/api/friends/respond', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/response.php`, {
+    const response = await fetch(`${API_BASE}/friends/response.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -408,7 +409,7 @@ app.post('/api/friends/respond', async (req, res) => {
 // Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
+    const response = await fetch(`${API_BASE}/friends/friendlist.php`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -426,7 +427,7 @@ app.get('/api/friends/list', async (req, res) => {
 // Fetches the list of pending friend requests for the logged-in user
 app.get('/api/friends/requests', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/listrequest.php`, {
+    const response = await fetch(`${API_BASE}/friends/listrequest.php`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
