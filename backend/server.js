@@ -439,7 +439,7 @@ app.post('/api/friends/respond', async (req, res) => {
 // Fetches the list of friends for the logged-in user
 app.get('/api/friends/list', async (req, res) => {
   try {
-    const response = await fetch(`${PHP_BACKEND}/friends/friendlist.php`, {
+    const response = await fetch('${PHP_BACKEND}/friends/friendlist.php', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -447,9 +447,17 @@ app.get('/api/friends/list', async (req, res) => {
       },
       credentials: 'include'
     });
-    const data = await parsePhpJson(response);
+
+    const raw = await response.text();
+    console.log('🐛 Raw response from friendlist.php:\n', raw); // <== CRUCIAL LINE
+
+    const jsonStart = raw.indexOf('{');
+    if (jsonStart === -1) throw new Error('Invalid response from PHP');
+
+    const data = JSON.parse(raw.slice(jsonStart));
     res.status(response.status).json(data);
   } catch (err) {
+    console.error('💥 Error in /api/friends/list:', err.message);
     res.status(500).json({ error: 'Could not fetch friends' });
   }
 });
