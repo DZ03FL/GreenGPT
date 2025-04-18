@@ -76,24 +76,21 @@ async function parsePhpJson(response) {
   const raw = await response.text();
   console.log('🐛 Raw response from PHP:\n', raw);
 
-  // Remove shebang lines only
   const cleanedLines = raw
     .split('\n')
     .filter(line => !line.trim().startsWith('#!'))
-    .join('\n')  // ← THIS FIX
+    .join('\n')  
     .trim();
 
 
-console.log('❓ Char at fail index 57:', cleanedLines[57]);
+console.log('Char at fail index 57:', cleanedLines[57]);
 
-  console.log('🧼 Final cleaned string to parse:\n', cleanedLines);
-  console.log('🧾 Cleaned response is array?', cleanedLines.startsWith('['));
-  console.log('🧾 Cleaned response is object?', cleanedLines.startsWith('{'));
+  
 
   try {
     return JSON.parse(cleanedLines);
   } catch (err) {
-    console.error('🐞 Failed to parse cleaned JSON:\n', cleanedLines);
+    console.error('Failed to parse cleaned JSON:\n', cleanedLines);
     throw err;
   }
 }
@@ -472,7 +469,7 @@ app.get('/api/friends/list', async (req, res) => {
       credentials: 'include'
     });
 
-    const data = await parsePhpJson(response);  // only parse once
+    const data = await parsePhpJson(response); 
     res.status(response.status).json(data);
 
   } catch (err) {
