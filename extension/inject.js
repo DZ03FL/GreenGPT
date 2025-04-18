@@ -59,6 +59,7 @@ console.log("ChatGPT token tracker script loaded");
         headers: {
           "Content-Type": "application/json"
         },
+        credentials: "include",
         body: JSON.stringify(payload)
       });
 
