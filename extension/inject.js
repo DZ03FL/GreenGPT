@@ -54,7 +54,7 @@ console.log("ChatGPT token tracker script loaded");
 
       console.log("[GreenGPT Extension] Token Data:", payload);
 
-      fetch("http://localhost:5000/api/token-usage", {
+      fetch("https://greengpt.onrender.com/api/token-usage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -63,7 +63,7 @@ console.log("ChatGPT token tracker script loaded");
         body: JSON.stringify(payload)
       });
 
-      fetch("http://localhost:5000/api/energy-estimate", {
+      fetch("https://greengpt.onrender.com/api/energy-estimate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
